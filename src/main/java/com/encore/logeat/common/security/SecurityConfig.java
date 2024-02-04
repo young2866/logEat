@@ -23,7 +23,7 @@ public class SecurityConfig {
 			.cors(cors -> cors.disable())
 			.httpBasic(basic -> basic.disable())
 			.authorizeHttpRequests(req -> req
-				.antMatchers("/user/new", "/user/doLogin")
+				.antMatchers("/user/new", "/doLogin")
 				.permitAll()
 				.anyRequest().authenticated())
 			.sessionManagement(session -> session
