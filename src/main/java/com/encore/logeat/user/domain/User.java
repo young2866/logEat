@@ -14,7 +14,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,8 +47,10 @@ public class User extends BaseTimeEntity {
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private List<Post> postList;
 
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	private List<Follow> follow;
+	@OneToMany(mappedBy = "following",fetch = FetchType.LAZY)
+	private List<Follow> followerList; // 유저를 팔로우
+
+	@OneToMany(mappedBy = "follower",fetch = FetchType.LAZY)
+	private List<Follow> followingList; // 유저가 팔로우
 
 }
