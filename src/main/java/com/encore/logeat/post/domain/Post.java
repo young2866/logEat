@@ -3,6 +3,7 @@ package com.encore.logeat.post.domain;
 import com.encore.logeat.common.entity.BaseTimeEntity;
 import com.encore.logeat.like.domain.Like;
 import com.encore.logeat.user.domain.User;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 @Entity
 public class Post extends BaseTimeEntity {
@@ -36,8 +38,7 @@ public class Post extends BaseTimeEntity {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	@OneToOne(mappedBy = "post", fetch = FetchType.LAZY)
-	@JoinColumn(name = "like_id")
-	private Like like;
+	@OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+	private List<Like> likes_list;
 
 }

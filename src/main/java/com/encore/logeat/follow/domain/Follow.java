@@ -1,13 +1,17 @@
 package com.encore.logeat.follow.domain;
 
 
+import com.encore.logeat.user.domain.User;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
 public class Follow {
@@ -17,8 +21,11 @@ public class Follow {
 	private Long id;
 
 
-	private Long follow; // -> 내가 팔로우 하는 사람
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "follow_id")
+	private User follower;
 
-	@Column(name = "follow_to_me")
-	private Long followToMe; // -> 나를 팔로우 하는 사람
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "following_id")
+	private User following;
 }
