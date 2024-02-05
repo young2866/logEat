@@ -43,7 +43,7 @@ public class UserService {
 			.filter(
 				it -> passwordEncoder.matches(userLoginRequestDto.getPassword(), it.getPassword()))
 			.orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다."));
-		String token = jwtTokenProvider.createToken(
+		String token = jwtTokenProvider.createAcessToken(
 			String.format("%s:%s", user.getId(), user.getRole()));
 		return new ResponseDto(HttpStatus.OK, "JWT token is created!", token);
 	}

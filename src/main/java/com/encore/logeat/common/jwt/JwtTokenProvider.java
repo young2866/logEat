@@ -28,7 +28,7 @@ public class JwtTokenProvider {
 		this.issuer = issuer;
 	}
 
-	public String createToken(String userSpecification) {
+	public String createAcessToken(String userSpecification) {
 
 		return Jwts.builder()
 			.signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
