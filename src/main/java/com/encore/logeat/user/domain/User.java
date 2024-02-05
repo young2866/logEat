@@ -16,8 +16,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Getter
 public class User extends BaseTimeEntity {
 
 	@Id
@@ -26,8 +34,8 @@ public class User extends BaseTimeEntity {
 	@Column(unique = true, nullable = false)
 	private String email;
 	@Column(unique = true, nullable = false, length = 8)
-	private String nickName;
-	@Column(nullable = false, length = 20)
+	private String nickname;
+	@Column(nullable = false)
 	private String password;
 	@Column(name = "profile_image_path")
 	private String profileImagePath;
