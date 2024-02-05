@@ -7,7 +7,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -30,11 +29,19 @@ public class JwtTokenProvider {
 	public String createToken(String userSpecification) {
 
 		return Jwts.builder()
-			.signWith(SignatureAlgorithm.HS256, secretKey)
+			.signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
 			.setSubject(userSpecification)
 			.setIssuer(issuer)
 			.setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
 			.setExpiration(Date.from(Instant.now().plus(expirationHours, ChronoUnit.HOURS)))
 			.compact();
+	}
+
+	public String validateTokenAndGetSubject(String token) {
+		return Jwts.parser()
+			.setSigningKey(secretKey.getBytes())
+			.parseClaimsJws(token)
+			.getBody()
+			.getSubject();
 	}
 }

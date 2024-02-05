@@ -35,7 +35,5 @@ public class UserController {
 		@RequestBody UserLoginRequestDto userLoginRequestDto) {
 		ResponseDto responseDto = userService.userLogin(userLoginRequestDto);
 		return new ResponseEntity<>(responseDto, HttpStatus.OK);
-
-
 	}
 }
