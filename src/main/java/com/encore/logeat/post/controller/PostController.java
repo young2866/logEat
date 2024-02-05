@@ -18,19 +18,11 @@ public class PostController {
         this.postService = postService;
     }
     @PostMapping("/post/new")
-    public ResponseEntity<ResponseDto> createUser(PostCreateRequestDto postCreateRequestDto) {
+    public ResponseEntity<ResponseDto> createPost(PostCreateRequestDto postCreateRequestDto) {
         Post post = postService.createPost(postCreateRequestDto);
         return new ResponseEntity<>(
                 new ResponseDto(HttpStatus.CREATED, "new Post Created!", post.getId()),
                 HttpStatus.CREATED);
     }
-
-//    @PreAuthorize("#post.memberEmail == authentication.principal.email") // 작성한 사람과 로그인한 이메일이 같아야만 업데이트 가능
-//    @PatchMapping("/posts/{postId}")
-//    public ResponseEntity<CommonResponseDto> itemUpdate(@PathVariable Long id, PostRequestDto postRequestDto){
-//        Post post = PostService.update(id, PostRequestDto);
-//        return new ResponseEntity<>(new CommonResponseDto(HttpStatus.OK, "Post successfully updated", Post.getId()), HttpStatus.OK);
-//    }
-
 
 }
