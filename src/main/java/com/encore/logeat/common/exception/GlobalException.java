@@ -21,7 +21,7 @@ public class GlobalException {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> illegalArgumentExceptionHandle(IllegalArgumentException e) {
-ㅁㄴㅇ
+
         /* body -> Response 엔티티적용해서 반환 */
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(HttpStatus.BAD_REQUEST.toString() + " : " + e.toString());
