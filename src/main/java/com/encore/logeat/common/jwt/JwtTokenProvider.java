@@ -1,5 +1,7 @@
 package com.encore.logeat.common.jwt;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.sql.Timestamp;
@@ -38,10 +40,11 @@ public class JwtTokenProvider {
 	}
 
 	public String validateTokenAndGetSubject(String token) {
-		return Jwts.parser()
-			.setSigningKey(secretKey.getBytes())
-			.parseClaimsJws(token)
-			.getBody()
-			.getSubject();
+		Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey.getBytes())
+			.parseClaimsJws(token);
+		if(!claimsJws.getBody().getExpiration().before(new Date())) {
+			return claimsJws.getBody().getSubject();
+		}
+		return null;
 	}
 }
