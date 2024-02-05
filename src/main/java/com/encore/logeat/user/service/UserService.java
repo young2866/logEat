@@ -30,7 +30,8 @@ public class UserService {
 
 	@Transactional
 	public User createUser(UserCreateRequestDto userCreateRequestDto) {
-		userCreateRequestDto.setPassword(passwordEncoder.encode(userCreateRequestDto.getPassword()));
+		userCreateRequestDto.setPassword(
+			passwordEncoder.encode(userCreateRequestDto.getPassword()));
 		User user = userCreateRequestDto.toEntity();
 		// 유저 프로필 이미지 추가해주는 로직 작성 필요
 		return userRepository.save(user);
@@ -39,7 +40,9 @@ public class UserService {
 	@Transactional
 	public ResponseDto userLogin(UserLoginRequestDto userLoginRequestDto) {
 		User user = userRepository.findByEmail(userLoginRequestDto.getEmail())
-			.orElseThrow(() -> new EntityNotFoundException("가입되지 않은 이메일 주소입니다."));
+			.filter(
+				it -> passwordEncoder.matches(userLoginRequestDto.getPassword(), it.getPassword()))
+			.orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다."));
 		String token = jwtTokenProvider.createToken(
 			String.format("%s:%s", user.getId(), user.getRole()));
 		return new ResponseDto(HttpStatus.OK, "JWT token is created!", token);
