@@ -4,6 +4,7 @@ import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostSearchResponseDto;
 import com.encore.logeat.post.domain.Post;
 import com.encore.logeat.post.repository.PostRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -19,6 +20,7 @@ public class PostService {
     public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
+    @PreAuthorize("hasAuthority('USER')")
     public Post createPost(PostCreateRequestDto postCreateRequestDto) {
 //        MultipartFile multipartFile = postCreateRequestDto.getPostImage();
 //        String fileName = multipartFile.getOriginalFilename();
