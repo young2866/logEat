@@ -1,17 +1,15 @@
 package com.encore.logeat.post.Service;
 
-import com.encore.logeat.post.Dto.PostCreateRequestDto;
+import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
+import com.encore.logeat.post.Dto.ResponseDto.PostSearchResponseDto;
 import com.encore.logeat.post.domain.Post;
 import com.encore.logeat.post.repository.PostRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -22,8 +20,8 @@ public class PostService {
         this.postRepository = postRepository;
     }
     public Post createPost(PostCreateRequestDto postCreateRequestDto) {
-        MultipartFile multipartFile = postCreateRequestDto.getPostImage();
-        String fileName = multipartFile.getOriginalFilename();
+//        MultipartFile multipartFile = postCreateRequestDto.getPostImage();
+//        String fileName = multipartFile.getOriginalFilename();
         Post new_post = Post.builder()
                 .title(postCreateRequestDto.getTitle())
                 .contents(postCreateRequestDto.getContents())
@@ -31,18 +29,32 @@ public class PostService {
                 .location(postCreateRequestDto.getLocation())
                 .build();
         Post post = postRepository.save(new_post);
-
-        Path path = Paths.get("/Users/jang-eunji/Desktop/tmp", post.getId() + "_" + fileName);
-        post.setImagePath(path.toString());
-        try {
-            byte[] bytes = multipartFile.getBytes();
-            Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("image not available");
-        }
+//        Path path = Paths.get("/Users/jang-eunji/Desktop/tmp", post.getId() + "_" + fileName);
+//        post.setImagePath(path.toString());
+//        try {
+//            byte[] bytes = multipartFile.getBytes();
+//            Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+//        } catch (IOException e) {
+//            throw new IllegalArgumentException("image not available");
+//        }
         return post;
     }
 
+    public List<PostSearchResponseDto> postTitleSearch(String titleKeyword) {
+        List<Post> post = postRepository.findPostByTitleContaining(titleKeyword);
+
+        return post.stream().map(PostSearchResponseDto::toPostSearchResponseDto).collect(Collectors.toList());
+    }
+
+    public List<PostSearchResponseDto> postCategorySearch(String category) {
+        List<Post> post = postRepository.findPostByCategory(category);
+
+        return post.stream().map(PostSearchResponseDto::toPostSearchResponseDto).collect(Collectors.toList());
+    }
 
 
+    public List<PostSearchResponseDto> postUserNameSearch(String userNickname) {
+        List<Post> post = postRepository.findByUserNickname(userNickname);
+        return post.stream().map(PostSearchResponseDto::toPostSearchResponseDto).collect(Collectors.toList());
+    }
 }
