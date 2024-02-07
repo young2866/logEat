@@ -39,7 +39,7 @@ public class UserService {
 
 	@Transactional
 	public User createUser(UserCreateRequestDto userCreateRequestDto) {
-		emailService.createEmailAuthNumber(userCreateRequestDto.getEmail());
+		//emailService.createEmailAuthNumber(userCreateRequestDto.getEmail());
 
 		userCreateRequestDto.setPassword(
 			passwordEncoder.encode(userCreateRequestDto.getPassword()));
