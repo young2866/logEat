@@ -9,10 +9,12 @@ import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +31,7 @@ public class LikeService {
         this.postRepository = postRepository;
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseDto postLike(Long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("post not found"));
 
@@ -38,11 +41,10 @@ public class LikeService {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("user not found"));
 
         List<Like> likeList = likeRepository.findLikesByUserIdAndPostId(userId, id);
-        Like like;
         ResponseDto responseDto;
 
         if (likeList.isEmpty()) {
-            like = Like.builder()
+            Like like = Like.builder()
                     .post(post)
                     .user(user)
                     .build();
@@ -53,7 +55,7 @@ public class LikeService {
                     .result(HttpStatus.OK)
                     .build();
         } else {
-            like = likeList.get(0);
+            Like like = likeList.get(0);
             likeRepository.delete(like);
             responseDto = ResponseDto.builder()
                     .httpStatus(HttpStatus.OK)
