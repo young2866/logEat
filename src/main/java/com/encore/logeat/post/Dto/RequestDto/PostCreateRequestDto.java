@@ -1,4 +1,4 @@
-package com.encore.logeat.post.Dto;
+package com.encore.logeat.post.Dto.RequestDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
