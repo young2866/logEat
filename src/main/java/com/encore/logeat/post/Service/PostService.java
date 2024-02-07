@@ -7,6 +7,7 @@ import com.encore.logeat.post.repository.PostRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,4 +60,10 @@ public class PostService {
         List<Post> post = postRepository.findByUserNickname(userNickname);
         return post.stream().map(PostSearchResponseDto::toPostSearchResponseDto).collect(Collectors.toList());
     }
+    public void deletePost(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("아이디를 찾을수 없습니다."));
+        postRepository.delete(post);
+    }
+
 }

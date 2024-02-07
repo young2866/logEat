@@ -17,7 +17,7 @@ import java.util.Random;
 
 @Service
 public class EmailService {
-
+    @Autowired
     private final JavaMailSender javaMailSender;
     private final RedisService redisService;
     private final MailProperties mailProperties;
@@ -48,6 +48,7 @@ public class EmailService {
         redisService.setValues(email, authNumber, duration);
 
         sendEmail(mailProperties.getUsername(), email, "인증번호", authNumber);
+
     }
 
     public Boolean verificationEmailAuth(String email, String authNumber) {
