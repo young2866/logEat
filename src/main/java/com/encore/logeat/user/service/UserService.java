@@ -2,6 +2,8 @@ package com.encore.logeat.user.service;
 
 import com.encore.logeat.common.dto.ResponseDto;
 import com.encore.logeat.common.jwt.JwtTokenProvider;
+import com.encore.logeat.common.redis.RedisService;
+import com.encore.logeat.mail.service.EmailService;
 import com.encore.logeat.common.jwt.refresh.UserRefreshToken;
 import com.encore.logeat.common.jwt.refresh.UserRefreshTokenRepository;
 import com.encore.logeat.user.domain.User;
@@ -13,9 +15,13 @@ import java.util.Map;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
 
 @Service
 public class UserService {
@@ -23,19 +29,24 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
-	private final UserRefreshTokenRepository userRefreshTokenRepository;
+	private final EmailService emailService;
+  private final UserRefreshTokenRepository userRefreshTokenRepository;
 
 	@Autowired
 	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-		JwtTokenProvider jwtTokenProvider, UserRefreshTokenRepository userRefreshTokenRepository) {
+                       JwtTokenProvider jwtTokenProvider, EmailService emailService,
+                    UserRefreshTokenRepository userRefreshTokenRepository) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.jwtTokenProvider = jwtTokenProvider;
-		this.userRefreshTokenRepository = userRefreshTokenRepository;
-	}
+    this.emailService = emailService;
+    this.userRefreshTokenRepository = userRefreshTokenRepository;
+    }
 
 	@Transactional
 	public User createUser(UserCreateRequestDto userCreateRequestDto) {
+		emailService.createEmailAuthNumber(userCreateRequestDto.getEmail());
+
 		userCreateRequestDto.setPassword(
 			passwordEncoder.encode(userCreateRequestDto.getPassword()));
 		User user = userCreateRequestDto.toEntity();
