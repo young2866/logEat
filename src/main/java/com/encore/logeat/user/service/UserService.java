@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -57,4 +58,28 @@ public class UserService {
 			String.format("%s:%s", user.getId(), user.getRole()));
 		return new ResponseDto(HttpStatus.OK, "JWT token is created!", token);
 	}
+
+
+	@Transactional
+	public ResponseEntity<?> updatePassword(String emailAuthNumber, String email, String changePwd) {
+		Boolean b = emailService.verificationEmailAuth(email, emailAuthNumber);
+
+		User findUser = userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("아이디가 없습니다."));
+		String encode = passwordEncoder.encode(changePwd);
+
+		String message = "";
+		if(b) {
+			findUser.updatedPassword(encode);
+			message = "비밀번호가 변경되었습니다.";
+		}else {
+			message = "인증이 만료되었습니다. 다시 설정해주시길 바랍니다.";
+		}
+
+		return ResponseEntity.ok()
+				.body(new ResponseDto(HttpStatus.OK, message, findUser.getEmail()));
+	}
+
+
+
+
 }

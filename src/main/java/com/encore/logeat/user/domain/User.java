@@ -53,4 +53,10 @@ public class User extends BaseTimeEntity {
 	@OneToMany(mappedBy = "follower",fetch = FetchType.LAZY)
 	private List<Follow> followingList; // 유저가 팔로우
 
+
+
+	public void updatedPassword(String password) {
+		this.password = password;
+	}
+
 }
