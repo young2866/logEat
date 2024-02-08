@@ -72,7 +72,6 @@ public class PostService {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         String[] split = name.split(":");
         long userId = Long.parseLong(split[0]);
-        System.out.println("userId = " + userId);
 
         if(userId == post.getUser().getId()){
             post.updatePost(

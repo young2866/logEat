@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 @AllArgsConstructor
 public class PostUpdateRequestDto {
-    private Long user_id;
     private String title;
     private String contents;
     private String category;
