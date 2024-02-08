@@ -17,7 +17,7 @@ import java.util.Random;
 
 @Service
 public class EmailService {
-    @Autowired
+
     private final JavaMailSender javaMailSender;
     private final RedisService redisService;
     private final MailProperties mailProperties;

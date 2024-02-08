@@ -62,7 +62,7 @@ public class PostService {
     }
     public void deletePost(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("아이디를 찾을수 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("글을 찾을수 없습니다."));
         postRepository.delete(post);
     }
 
