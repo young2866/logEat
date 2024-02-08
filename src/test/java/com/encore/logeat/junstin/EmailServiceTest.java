@@ -53,7 +53,7 @@ class EmailServiceTest {
         String authNumber = emailService.generateRandomNumber();
         Duration duration = Duration.ofMinutes(3);
 
-        emailService.createEmailAuthNumber(userCreateRequestDto.getEmail());
+        emailService.createEmailAuthNumber(userCreateRequestDto.getEmail(), authNumber);
         redisService.setValues(userCreateRequestDto.getEmail(), authNumber, duration);
 
         String authValues = redisService.getValues(userCreateRequestDto.getEmail());

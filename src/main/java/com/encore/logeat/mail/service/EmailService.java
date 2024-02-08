@@ -42,8 +42,7 @@ public class EmailService {
 
 
     @Async
-    public String createEmailAuthNumber(String email) {
-        String authNumber = generateRandomNumber();
+    public String createEmailAuthNumber(String email, String authNumber) {
         Duration duration = Duration.ofMinutes(3);
         redisService.setValues(email, authNumber, duration);
 

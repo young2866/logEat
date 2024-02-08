@@ -6,10 +6,9 @@ import com.encore.logeat.mail.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.mail.MailException;
+import org.springframework.mail.MailSendException;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class MailController {
@@ -23,22 +22,41 @@ public class MailController {
         this.redisService = redisService;
     }
 
-    @PostMapping("/emails/verifications")
-    public ResponseEntity<ResponseDto> verificationEmail(@RequestParam("email") String email,
-                                                         @RequestParam("authCode") String authCode) {
+    @PostMapping("/emails/auth/verifications")
+    public ResponseEntity<?> verificationEmail(@RequestParam("email") String email,
+                                               @RequestParam("authCode") String authCode) {
+        String resultMessage = "";
 
         String authValues = redisService.getValues(email);
         boolean isAuthCheck = redisService.checkExistsValue(authValues);
-        String resultMessage = "";
+        boolean isAuthEquals = authCode.equals(authValues);
 
         if(isAuthCheck) {
-            resultMessage = "이메일 인증이 완료되었습니다.";
+            if(isAuthEquals) {
+                resultMessage = "이메일 인증이 완료되었습니다.";
+            }else {
+                resultMessage = "인증번호가 맞지않습니다.\n 다시 확인해주세요.";
+            }
         }else {
-            resultMessage = "이메일 인증을 다시 해주세요.";
+            resultMessage = "이메일 인증시간이 만료되었습니다";
         }
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseDto(HttpStatus.OK, resultMessage, email));
+    }
+
+    @PostMapping("/email/auth/")
+    public ResponseEntity<?> authMailSend(@RequestParam String email) {
+        ResponseEntity<?> response;
+        try {
+            String authNumber = emailService.generateRandomNumber();
+            emailService.createEmailAuthNumber(email, authNumber);
+        }catch (MailException e) {
+            throw new MailSendException("이메일 인증코드 전송에 실패했습니다.");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseDto(HttpStatus.OK, "이메일로 인증코드가 발송되었습니다", email));
     }
 
 

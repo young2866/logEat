@@ -41,7 +41,8 @@ public class UpdatedPasswordTest {
         createRequestDto.setIntroduce("자기소개");
 
         User user = userService.createUser(createRequestDto);
-        String emailAuthNumber = emailService.createEmailAuthNumber(user.getEmail());
+        String authNumber = emailService.generateRandomNumber();
+        String emailAuthNumber = emailService.createEmailAuthNumber(user.getEmail(), authNumber);
 
         Boolean b = emailService.verificationEmailAuth(user.getEmail(), emailAuthNumber);
 
