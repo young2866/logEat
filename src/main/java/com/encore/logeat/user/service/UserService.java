@@ -64,11 +64,10 @@ public class UserService {
 	public ResponseEntity<?> updatePassword(String emailAuthNumber, String email, String changePwd) {
 		Boolean b = emailService.verificationEmailAuth(email, emailAuthNumber);
 
-		User findUser = userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("아이디가 없습니다."));
-		String encode = passwordEncoder.encode(changePwd);
-
 		String message = "";
 		if(b) {
+			User findUser = userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("아이디가 없습니다."));
+			String encode = passwordEncoder.encode(changePwd);
 			findUser.updatedPassword(encode);
 			message = "비밀번호가 변경되었습니다.";
 		}else {
