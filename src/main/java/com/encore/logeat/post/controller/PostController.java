@@ -2,6 +2,7 @@ package com.encore.logeat.post.controller;
 
 import com.encore.logeat.common.dto.ResponseDto;
 import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
+import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostSearchResponseDto;
 import com.encore.logeat.post.Service.PostService;
 import com.encore.logeat.post.domain.Post;
@@ -27,6 +28,11 @@ public class PostController {
                 new ResponseDto(HttpStatus.CREATED, "new Post Created!", post.getId()),
                 HttpStatus.CREATED);
     }
+    @PatchMapping("/post/{id}/update")
+    public ResponseEntity<ResponseDto> itemUpdate(@PathVariable Long id, PostUpdateRequestDto postUpdateRequestDto){
+        Post post = postService.update(id, postUpdateRequestDto);
+        return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "post successfully updated", post.getId()), HttpStatus.OK);
+    }
 
     @GetMapping("/post/search/title")
     public List<PostSearchResponseDto> postIncludeTitleSearch(@RequestParam(value = "titleKeyword") String titleKeyword) {
@@ -45,4 +51,5 @@ public class PostController {
         List<PostSearchResponseDto> postSearchResponseDtoList = postService.postCategorySearch(category);
         return postSearchResponseDtoList;
     }
+
 }
