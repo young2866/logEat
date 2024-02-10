@@ -52,16 +52,11 @@ class EmailServiceTest {
 
         String authNumber = emailService.generateRandomNumber();
         Duration duration = Duration.ofMinutes(3);
-        emailService.sendEmail(
-                mailProperties.getUsername(),
-                userCreateRequestDto.getEmail(),
-                "LogEat 인증 메일입니다",
-                authNumber
-        );
+
+        emailService.createEmailAuthNumber(userCreateRequestDto.getEmail(), authNumber);
         redisService.setValues(userCreateRequestDto.getEmail(), authNumber, duration);
 
         String authValues = redisService.getValues(userCreateRequestDto.getEmail());
-
         boolean isAuthCheck = redisService.checkExistsValue(authValues);
 
         Assertions.assertThat(isAuthCheck).isEqualTo(true);

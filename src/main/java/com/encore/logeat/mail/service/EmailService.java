@@ -42,13 +42,13 @@ public class EmailService {
 
 
     @Async
-    public void createEmailAuthNumber(String email) {
-        String authNumber = generateRandomNumber();
+    public String createEmailAuthNumber(String email, String authNumber) {
         Duration duration = Duration.ofMinutes(3);
         redisService.setValues(email, authNumber, duration);
 
         sendEmail(mailProperties.getUsername(), email, "인증번호", authNumber);
 
+        return authNumber;
     }
 
     public Boolean verificationEmailAuth(String email, String authNumber) {
