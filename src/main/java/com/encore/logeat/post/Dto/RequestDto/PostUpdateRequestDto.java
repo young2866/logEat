@@ -1,4 +1,4 @@
-package com.encore.logeat.post.Dto;
+package com.encore.logeat.post.Dto.RequestDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @Builder
 @AllArgsConstructor
-public class PostCreateRequestDto {
+public class PostUpdateRequestDto {
     private String title;
     private String contents;
     private String category;
