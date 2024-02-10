@@ -92,31 +92,31 @@ public class PostService {
     public Page<PostSearchResponseDto> postView(Pageable pageable) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         String[] split = name.split(":");
-        Long currentUserId = Long.parseLong(split[0]);
-        Page<Post> all = postRepository.findAllAccessiblePosts(currentUserId,pageable);
+        Long id = Long.parseLong(split[0]);
+        Page<Post> all = postRepository.findAllAccessiblePosts(id,pageable);
         return all.map(PostSearchResponseDto::toPostSearchResponseDto);
     }
     public Page<PostSearchResponseDto> postTitleSearch(String titleKeyword, Pageable pageable) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         String[] split = name.split(":");
-        Long currentUserId = Long.parseLong(split[0]);
-        Page<Post> post = postRepository.findPostByTitleContaining(currentUserId,titleKeyword, pageable);
+        Long id = Long.parseLong(split[0]);
+        Page<Post> post = postRepository.findPostByTitleContaining(id,titleKeyword, pageable);
         return post.map(PostSearchResponseDto::toPostSearchResponseDto);
     }
 
     public Page<PostSearchResponseDto> postIncludeCategorySearch(@RequestParam(value = "category") String category, @PageableDefault(size = 9) Pageable pageable) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         String[] split = name.split(":");
-        Long currentUserId = Long.parseLong(split[0]);
-        Page<Post> post = postRepository.findPostByCategory(currentUserId,category, pageable);
+        Long id = Long.parseLong(split[0]);
+        Page<Post> post = postRepository.findPostByCategory(id,category, pageable);
         return post.map(PostSearchResponseDto::toPostSearchResponseDto);
     }
 
     public Page<PostSearchResponseDto> postIncludeUserNameSearch(@RequestParam(value = "userName") String userName, @PageableDefault(size = 9) Pageable pageable) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         String[] split = name.split(":");
-        Long currentUserId = Long.parseLong(split[0]);
-        Page<Post> post = postRepository.findByUserNickname(currentUserId,userName, pageable);
+        Long id = Long.parseLong(split[0]);
+        Page<Post> post = postRepository.findByUserNickname(id,userName, pageable);
         return post.map(PostSearchResponseDto::toPostSearchResponseDto);
     }
 

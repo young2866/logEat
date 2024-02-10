@@ -71,7 +71,7 @@ public class PostController {
     public ResponseEntity<ResponseDto> secretPostStatus(@PathVariable Long id, PostSecretUpdateRequestDto postSecretUpdateRequestDto){
         Post post = postService.updateSecretStatus(id,postSecretUpdateRequestDto);
             return new ResponseEntity<>(
-                    new ResponseDto(HttpStatus.OK, "비밀글 설정 완료", post.getId()),HttpStatus.OK);
+                    new ResponseDto(HttpStatus.OK, "비밀글 상태 : "+ post.getSecretYorN(), post.getId()),HttpStatus.OK);
 
     }
 
