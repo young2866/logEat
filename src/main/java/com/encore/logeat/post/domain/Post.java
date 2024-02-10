@@ -1,9 +1,7 @@
 package com.encore.logeat.post.domain;
 
 import com.encore.logeat.common.entity.BaseTimeEntity;
-import com.encore.logeat.like.domain.Like;
 import com.encore.logeat.user.domain.User;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +14,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 @Entity
 @Getter
@@ -44,8 +41,11 @@ public class Post extends BaseTimeEntity {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	@OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
-	private List<Like> likes_list;
+	@Builder.Default
+	private int likeCount=0;
+
+	public void addLikeCount(){this.likeCount+=1;}
+	public void reduceLikeCount(){this.likeCount-=1;}
 	public void setImagePath(String imagePath){
 		this.imagePath = imagePath;
 	}
@@ -55,4 +55,7 @@ public class Post extends BaseTimeEntity {
         this.location = location;
         this.category = category;
     }
+	public void setSecret(String secretYorN){
+		this.secretYorN = secretYorN;
+	}
 }

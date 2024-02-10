@@ -26,7 +26,7 @@ public class PostSearchResponseDto {
         builder.title(post.getTitle());
         builder.userNickname(post.getUser().getNickname());
         builder.createdTime(post.getCreatedTime().toLocalDate());
-        builder.likeCount(post.getLikes_list().size());
+        builder.likeCount(post.getLikeCount());
 
         return builder.build();
     }

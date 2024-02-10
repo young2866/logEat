@@ -1,24 +1,24 @@
 package com.encore.logeat.post.Service;
 
 import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
+import com.encore.logeat.post.Dto.RequestDto.PostSecretUpdateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostSearchResponseDto;
 import com.encore.logeat.post.domain.Post;
 import com.encore.logeat.post.repository.PostRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -89,22 +89,35 @@ public class PostService {
 //        }
         return post;
     }
-    public List<PostSearchResponseDto> postTitleSearch(String titleKeyword) {
-        List<Post> post = postRepository.findPostByTitleContaining(titleKeyword);
-
-        return post.stream().map(PostSearchResponseDto::toPostSearchResponseDto).collect(Collectors.toList());
+    public Page<PostSearchResponseDto> postView(Pageable pageable) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        String[] split = name.split(":");
+        Long currentUserId = Long.parseLong(split[0]);
+        Page<Post> all = postRepository.findAllAccessiblePosts(currentUserId,pageable);
+        return all.map(PostSearchResponseDto::toPostSearchResponseDto);
+    }
+    public Page<PostSearchResponseDto> postTitleSearch(String titleKeyword, Pageable pageable) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        String[] split = name.split(":");
+        Long currentUserId = Long.parseLong(split[0]);
+        Page<Post> post = postRepository.findPostByTitleContaining(currentUserId,titleKeyword, pageable);
+        return post.map(PostSearchResponseDto::toPostSearchResponseDto);
     }
 
-    public List<PostSearchResponseDto> postCategorySearch(String category) {
-        List<Post> post = postRepository.findPostByCategory(category);
-
-        return post.stream().map(PostSearchResponseDto::toPostSearchResponseDto).collect(Collectors.toList());
+    public Page<PostSearchResponseDto> postIncludeCategorySearch(@RequestParam(value = "category") String category, @PageableDefault(size = 9) Pageable pageable) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        String[] split = name.split(":");
+        Long currentUserId = Long.parseLong(split[0]);
+        Page<Post> post = postRepository.findPostByCategory(currentUserId,category, pageable);
+        return post.map(PostSearchResponseDto::toPostSearchResponseDto);
     }
 
-
-    public List<PostSearchResponseDto> postUserNameSearch(String userNickname) {
-        List<Post> post = postRepository.findByUserNickname(userNickname);
-        return post.stream().map(PostSearchResponseDto::toPostSearchResponseDto).collect(Collectors.toList());
+    public Page<PostSearchResponseDto> postIncludeUserNameSearch(@RequestParam(value = "userName") String userName, @PageableDefault(size = 9) Pageable pageable) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        String[] split = name.split(":");
+        Long currentUserId = Long.parseLong(split[0]);
+        Page<Post> post = postRepository.findByUserNickname(currentUserId,userName, pageable);
+        return post.map(PostSearchResponseDto::toPostSearchResponseDto);
     }
 
     public void deletePost(Long id) {
@@ -123,4 +136,18 @@ public class PostService {
     }
 
 
+    public Post updateSecretStatus(Long id, PostSecretUpdateRequestDto secretStatus) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("글을 찾지 못했습니다."));
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        String[] split = name.split(":");
+        long userId = Long.parseLong(split[0]);
+        if (userId == post.getUser().getId()) {
+            post.setSecret(secretStatus.getSecretYorN());
+        }else {
+            throw new EntityNotFoundException("아이디가 일치하지 않습니다");
+        }
+
+        postRepository.save(post); //  더티체킹 때문에 안해도 되지만 혹시해서 함
+        return post;
+    }
 }
