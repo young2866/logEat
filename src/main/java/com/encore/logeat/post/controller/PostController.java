@@ -52,4 +52,13 @@ public class PostController {
         return postSearchResponseDtoList;
     }
 
+    @DeleteMapping("/post/{id}/delete")
+    public ResponseEntity<ResponseDto> deletePost(@PathVariable Long id){
+        postService.deletePost(id);
+        return new ResponseEntity<>(
+                new ResponseDto(HttpStatus.OK, "Delete Finish!", null),
+                HttpStatus.OK);
+    }
+
+
 }

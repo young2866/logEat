@@ -8,19 +8,14 @@ import com.encore.logeat.post.repository.PostRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -111,5 +106,21 @@ public class PostService {
         List<Post> post = postRepository.findByUserNickname(userNickname);
         return post.stream().map(PostSearchResponseDto::toPostSearchResponseDto).collect(Collectors.toList());
     }
+
+    public void deletePost(Long id) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        String[] split = name.split(":");
+        long userId = Long.parseLong(split[0]);
+        System.out.println("userId = " + userId);
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("글을 찾을수 없습니다."));
+        if(userId == post.getUser().getId()){
+            postRepository.delete(post);
+        }
+
+
+
+    }
+
 
 }
