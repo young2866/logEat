@@ -17,8 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 @Entity
 @Getter
@@ -51,4 +49,10 @@ public class Post extends BaseTimeEntity {
 	public void setImagePath(String imagePath){
 		this.imagePath = imagePath;
 	}
+	public void updatePost(String title, String contents, String location, String category){
+        this.title = title;
+        this.contents = contents;
+        this.location = location;
+        this.category = category;
+    }
 }
