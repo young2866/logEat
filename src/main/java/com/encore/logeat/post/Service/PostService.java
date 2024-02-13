@@ -7,6 +7,8 @@ import com.encore.logeat.post.domain.Post;
 import com.encore.logeat.post.repository.PostRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -89,22 +91,24 @@ public class PostService {
 //        }
         return post;
     }
-    public List<PostSearchResponseDto> postTitleSearch(String titleKeyword) {
-        List<Post> post = postRepository.findPostByTitleContaining(titleKeyword);
-
-        return post.stream().map(PostSearchResponseDto::toPostSearchResponseDto).collect(Collectors.toList());
+    public Page<PostSearchResponseDto> postTitleSearch(String titleKeyword, Pageable pageable) {
+        Page<Post> post = postRepository.findPostByTitleContaining(titleKeyword, pageable);
+        return post.map(PostSearchResponseDto::toPostSearchResponseDto);
     }
 
-    public List<PostSearchResponseDto> postCategorySearch(String category) {
-        List<Post> post = postRepository.findPostByCategory(category);
-
-        return post.stream().map(PostSearchResponseDto::toPostSearchResponseDto).collect(Collectors.toList());
+    public Page<PostSearchResponseDto> postCategorySearch(String category, Pageable pageable) {
+        Page<Post> post = postRepository.findPostByCategory(category, pageable);
+        return post.map(PostSearchResponseDto::toPostSearchResponseDto);
     }
 
+    public Page<PostSearchResponseDto> postUserNameSearch(String userNickname, Pageable pageable) {
+        Page<Post> post = postRepository.findByUserNickname(userNickname, pageable);
+        return post.map(PostSearchResponseDto::toPostSearchResponseDto);
+    }
 
-    public List<PostSearchResponseDto> postUserNameSearch(String userNickname) {
-        List<Post> post = postRepository.findByUserNickname(userNickname);
-        return post.stream().map(PostSearchResponseDto::toPostSearchResponseDto).collect(Collectors.toList());
+    public Page<PostSearchResponseDto> findAllAccessiblePosts(Pageable pageable) {
+        Page<Post> all = postRepository.findAll(pageable);
+        return all.map(PostSearchResponseDto::toPostSearchResponseDto);
     }
 
     public void deletePost(Long id) {

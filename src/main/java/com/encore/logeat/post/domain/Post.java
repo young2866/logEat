@@ -44,8 +44,11 @@ public class Post extends BaseTimeEntity {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	@OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
-	private List<Like> likes_list;
+	@Builder.Default
+	private int likeCount=0;
+
+	public void addLikeCount(){this.likeCount+=1;}
+	public void reduceLikeCount(){this.likeCount-=1;}
 	public void setImagePath(String imagePath){
 		this.imagePath = imagePath;
 	}

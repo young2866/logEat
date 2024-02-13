@@ -76,23 +76,23 @@ public class UserService {
 	}
 
 
-	@Transactional
-	public ResponseEntity<?> updatePassword(String emailAuthNumber, String email, String changePwd) {
-		Boolean b = emailService.verificationEmailAuth(email, emailAuthNumber);
-
-		String message = "";
-		if(b) {
-			User findUser = userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("아이디가 없습니다."));
-			String encode = passwordEncoder.encode(changePwd);
-			findUser.updatedPassword(encode);
-			message = "비밀번호가 변경되었습니다.";
-		}else {
-			message = "인증이 만료되었습니다. 다시 설정해주시길 바랍니다.";
-		}
-
-		return ResponseEntity.ok()
-				.body(new ResponseDto(HttpStatus.OK, message, findUser.getEmail()));
-	}
+//	@Transactional
+//	public ResponseEntity<?> updatePassword(String emailAuthNumber, String email, String changePwd) {
+//		Boolean b = emailService.verificationEmailAuth(email, emailAuthNumber);
+//
+//		String message = "";
+//		if(b) {
+//			User findUser = userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("아이디가 없습니다."));
+//			String encode = passwordEncoder.encode(changePwd);
+//			findUser.updatedPassword(encode);
+//			message = "비밀번호가 변경되었습니다.";
+//		}else {
+//			message = "인증이 만료되었습니다. 다시 설정해주시길 바랍니다.";
+//		}
+//
+//		return ResponseEntity.ok()
+//				.body(new ResponseDto(HttpStatus.OK, message, findUser.getEmail()));
+//	}
 
 
 
