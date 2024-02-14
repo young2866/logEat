@@ -5,6 +5,9 @@ import com.encore.logeat.follow.domain.Follow;
 import com.encore.logeat.follow.repository.FollowRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +38,17 @@ public class FollowService {
 		if (userId == id) {
 			throw new IllegalArgumentException("자신을 팔로우 할 수 없습니다.");
 		}
+
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("예기치 못한 에러가 발생하였습니다."));
 		User followUser = userRepository.findById(id)
 			.orElseThrow(() -> new EntityNotFoundException("팔로우를 할 유저가 존재하지 않습니다."));
+		Optional<Follow> alreadyFollow = followRepository.findFollowByFollowerAndFollowing(
+			user, followUser);
+		if (alreadyFollow.isPresent()) {
+			followRepository.delete(alreadyFollow.get());
+			return new ResponseDto(HttpStatus.OK, followUser.getNickname() + "님을 언팔로우 하였습니다.", null);
+		}
 		Follow follow = Follow.builder()
 			.follower(user)
 			.following(followUser)
