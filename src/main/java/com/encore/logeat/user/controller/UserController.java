@@ -8,6 +8,7 @@ import com.encore.logeat.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +35,17 @@ public class UserController {
 	public ResponseEntity<ResponseDto> userLogin(
 		@RequestBody UserLoginRequestDto userLoginRequestDto) {
 		ResponseDto responseDto = userService.userLogin(userLoginRequestDto);
+		return new ResponseEntity<>(responseDto, HttpStatus.OK);
+	}
+
+	@GetMapping("/myfollower")
+	public ResponseEntity<ResponseDto> myFollower() {
+		ResponseDto responseDto = userService.getMyFollower();
+		return new ResponseEntity<>(responseDto, HttpStatus.OK);
+	}
+	@GetMapping("/myfollowing")
+	public ResponseEntity<ResponseDto> myFollowing() {
+		ResponseDto responseDto = userService.getMyFollowing();
 		return new ResponseEntity<>(responseDto, HttpStatus.OK);
 	}
 }
