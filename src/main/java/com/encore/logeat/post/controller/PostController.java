@@ -3,6 +3,7 @@ package com.encore.logeat.post.controller;
 import com.encore.logeat.common.dto.ResponseDto;
 import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
+import com.encore.logeat.post.Dto.ResponseDto.PostDetailResponseDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostSearchResponseDto;
 import com.encore.logeat.post.Service.PostService;
 import com.encore.logeat.post.domain.Post;
@@ -75,6 +76,13 @@ public class PostController {
         Page<PostSearchResponseDto> postSearchResponseDtos = postService.findAllAccessiblePosts(pageable);
         return postSearchResponseDtos;
     }
+
+    @GetMapping("/post/{id}/detail")
+    public PostDetailResponseDto postIncludeTitleSearch(@PathVariable Long id) {
+        PostDetailResponseDto postDetailResponseDto = postService.postDetail(id);
+        return postDetailResponseDto;
+    }
+
 }
 
 

@@ -2,11 +2,14 @@ package com.encore.logeat.post.Service;
 
 import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
+import com.encore.logeat.post.Dto.ResponseDto.PostDetailResponseDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostSearchResponseDto;
 import com.encore.logeat.post.domain.Post;
 import com.encore.logeat.post.repository.PostRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +21,12 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -122,9 +131,25 @@ public class PostService {
             postRepository.delete(post);
         }
 
-
-
+    }
+    public PostDetailResponseDto postDetail(Long id) {
+        Post post = postRepository.findById(id).orElseThrow(()-> new EntityNotFoundException());
+        PostDetailResponseDto postDetailResponseDto = PostDetailResponseDto.toPostDetailResponseDto(post);
+//        postDetailResponseDto.setPostImage(getImage(id).toString());
+        return postDetailResponseDto;
     }
 
+//    public Resource getImage(Long id) {
+//        Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("not fount item"));
+//        String imagePath = post.getImagePath();
+//        Path path = Paths.get(imagePath);
+//        Resource resource = null;
+//        try {
+//            resource = new UrlResource(path.toUri());
+//        } catch (MalformedURLException e) {
+//            throw new IllegalArgumentException(e);
+//        }
+//        return resource;
+//    }
 
 }
