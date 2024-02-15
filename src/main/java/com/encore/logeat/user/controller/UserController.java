@@ -38,12 +38,12 @@ public class UserController {
 		return new ResponseEntity<>(responseDto, HttpStatus.OK);
 	}
 
-	@GetMapping("/myfollower")
+	@GetMapping("/user/myfollower")
 	public ResponseEntity<ResponseDto> myFollower() {
 		ResponseDto responseDto = userService.getMyFollower();
 		return new ResponseEntity<>(responseDto, HttpStatus.OK);
 	}
-	@GetMapping("/myfollowing")
+	@GetMapping("/user/myfollowing")
 	public ResponseEntity<ResponseDto> myFollowing() {
 		ResponseDto responseDto = userService.getMyFollowing();
 		return new ResponseEntity<>(responseDto, HttpStatus.OK);
