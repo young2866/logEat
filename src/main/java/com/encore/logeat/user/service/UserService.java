@@ -11,17 +11,22 @@ import com.encore.logeat.user.dto.request.UserCreateRequestDto;
 import com.encore.logeat.user.dto.request.UserLoginRequestDto;
 import com.encore.logeat.user.repository.UserRepository;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -45,7 +50,7 @@ public class UserService {
 
 	@Transactional
 	public User createUser(UserCreateRequestDto userCreateRequestDto) {
-		emailService.createEmailAuthNumber(userCreateRequestDto.getEmail());
+		//emailService.createEmailAuthNumber(userCreateRequestDto.getEmail());
 
 		userCreateRequestDto.setPassword(
 			passwordEncoder.encode(userCreateRequestDto.getPassword()));
@@ -73,4 +78,56 @@ public class UserService {
 		result.put("refresh_token", refreshToken);
 		return new ResponseDto(HttpStatus.OK, "JWT token is created!", result);
 	}
+
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseDto getMyFollower() {
+		String name = SecurityContextHolder.getContext().getAuthentication().getName();
+		String[] split = name.split(":");
+		long userId = Long.parseLong(split[0]);
+
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("예기치 못한 에러가 발생하였습니다."));
+		List<String> result = user.getFollowerList().stream().map(follow -> {
+			return follow.getFollower().getNickname();
+		}).collect(Collectors.toList());
+		return new ResponseDto(HttpStatus.OK, "팔로워의 수는 " + result.size() + "입니다.", result);
+	}
+
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseDto getMyFollowing() {
+		String name = SecurityContextHolder.getContext().getAuthentication().getName();
+		String[] split = name.split(":");
+		long userId = Long.parseLong(split[0]);
+
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("예기치 못한 에러가 발생하였습니다."));
+		List<String> result = user.getFollowingList().stream().map(follow -> {
+			return follow.getFollowing().getNickname();
+		}).collect(Collectors.toList());
+		return new ResponseDto(HttpStatus.OK, "팔로우 하고 있는 유저의 수는 " + result.size() + "입니다.", result);
+	}
+
+//	@Transactional
+//	public ResponseEntity<?> updatePassword(String emailAuthNumber, String email, String changePwd) {
+//		Boolean b = emailService.verificationEmailAuth(email, emailAuthNumber);
+//
+//		String message = "";
+//		if(b) {
+//			User findUser = userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("아이디가 없습니다."));
+//			String encode = passwordEncoder.encode(changePwd);
+//			findUser.updatedPassword(encode);
+//			message = "비밀번호가 변경되었습니다.";
+//		}else {
+//			message = "인증이 만료되었습니다. 다시 설정해주시길 바랍니다.";
+//		}
+//
+//		return ResponseEntity.ok()
+//				.body(new ResponseDto(HttpStatus.OK, message, findUser.getEmail()));
+//	}
+
+
+
+
 }

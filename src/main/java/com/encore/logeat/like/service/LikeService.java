@@ -31,6 +31,7 @@ public class LikeService {
         this.postRepository = postRepository;
     }
 
+    @Transactional
     @PreAuthorize("hasAuthority('USER')")
     public ResponseDto postLike(Long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("post not found"));
@@ -54,6 +55,8 @@ public class LikeService {
                     .message(user.getNickname() + " success like it on the post")
                     .result(HttpStatus.OK)
                     .build();
+            post.addLikeCount();
+
         } else {
             Like like = likeList.get(0);
             likeRepository.delete(like);
@@ -62,6 +65,7 @@ public class LikeService {
                     .message("like delete")
                     .result(HttpStatus.OK)
                     .build();
+            post.reduceLikeCount();
         }
         return responseDto;
     }

@@ -14,6 +14,7 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
+
     @Query("SELECT p FROM Post p WHERE (p.user.id = :userId OR p.secretYorN = 'N' OR p.secretYorN IS NULL)")
     Page<Post> findAllAccessiblePosts(@Param("userId") Long userId, Pageable pageable);
 
