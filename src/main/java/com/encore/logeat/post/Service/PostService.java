@@ -153,16 +153,12 @@ public class PostService {
         } else {
             throw new EntityNotFoundException("아이디가 일치하지 않습니다.");
         }
-
-
+        return post;
     }
+
     public PostDetailResponseDto postDetail(Long id) {
         Post post = postRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("not found post"));
         PostDetailResponseDto postDetailResponseDto = PostDetailResponseDto.toPostDetailResponseDto(post);
         return postDetailResponseDto;
-    }
-
-
-        return post;
     }
 }
