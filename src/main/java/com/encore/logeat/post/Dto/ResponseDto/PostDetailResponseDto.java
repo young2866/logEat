@@ -29,6 +29,7 @@ public class PostDetailResponseDto {
             builder.likeCount(post.getLikeCount());
             builder.category(post.getCategory());
             builder.location(post.getLocation());
+//            builder.postImage(post.getImagePath());
             builder.createdTime(post.getCreatedTime().toLocalDate());
 
         return builder.build();

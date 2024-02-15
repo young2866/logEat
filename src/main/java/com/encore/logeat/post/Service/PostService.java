@@ -49,7 +49,7 @@ public class PostService {
         String[] split = name.split(":");
         long userId = Long.parseLong(split[0]);
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException());
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("not found user"));
 
         Post new_post = Post.builder()
                 .title(postCreateRequestDto.getTitle())
@@ -133,23 +133,9 @@ public class PostService {
 
     }
     public PostDetailResponseDto postDetail(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(()-> new EntityNotFoundException());
+        Post post = postRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("not햣 found post"));
         PostDetailResponseDto postDetailResponseDto = PostDetailResponseDto.toPostDetailResponseDto(post);
-//        postDetailResponseDto.setPostImage(getImage(id).toString());
         return postDetailResponseDto;
     }
-
-//    public Resource getImage(Long id) {
-//        Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("not fount item"));
-//        String imagePath = post.getImagePath();
-//        Path path = Paths.get(imagePath);
-//        Resource resource = null;
-//        try {
-//            resource = new UrlResource(path.toUri());
-//        } catch (MalformedURLException e) {
-//            throw new IllegalArgumentException(e);
-//        }
-//        return resource;
-//    }
 
 }
