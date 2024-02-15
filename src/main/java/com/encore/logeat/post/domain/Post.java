@@ -35,8 +35,9 @@ public class Post extends BaseTimeEntity {
 	private String location;
 	private String category;
 	private int viewCount;
+	@Builder.Default
 	@Column(name = "secret_y_or_n")
-	private String secretYorN; // 공개 여부
+	private String secretYorN = "N"; // 공개 여부
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;

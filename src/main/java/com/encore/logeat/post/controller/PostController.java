@@ -67,7 +67,7 @@ public class PostController {
                 new ResponseDto(HttpStatus.OK, "Delete Finish!", null),
                 HttpStatus.OK);
     }
-    @PatchMapping("/post/{id}/secretYn")
+    @PatchMapping("/post/{id}/secretyn")
     public ResponseEntity<ResponseDto> secretPostStatus(@PathVariable Long id, PostSecretUpdateRequestDto postSecretUpdateRequestDto){
         Post post = postService.updateSecretStatus(id,postSecretUpdateRequestDto);
             return new ResponseEntity<>(
