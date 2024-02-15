@@ -3,11 +3,14 @@ package com.encore.logeat.post.Service;
 import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostSecretUpdateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
+import com.encore.logeat.post.Dto.ResponseDto.PostDetailResponseDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostSearchResponseDto;
 import com.encore.logeat.post.domain.Post;
 import com.encore.logeat.post.repository.PostRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,7 +38,7 @@ public class PostService {
         String[] split = name.split(":");
         long userId = Long.parseLong(split[0]);
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException());
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("not found user"));
 
         Post newPost = Post.builder()
                 .title(postCreateRequestDto.getTitle())
@@ -137,6 +140,7 @@ public class PostService {
         if (userId == post.getUser().getId()) {
             postRepository.delete(post);
         }
+
     }
 
     public Post updateSecretStatus(Long id, PostSecretUpdateRequestDto secretStatus) {
@@ -149,6 +153,15 @@ public class PostService {
         } else {
             throw new EntityNotFoundException("아이디가 일치하지 않습니다.");
         }
+
+
+    }
+    public PostDetailResponseDto postDetail(Long id) {
+        Post post = postRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("not found post"));
+        PostDetailResponseDto postDetailResponseDto = PostDetailResponseDto.toPostDetailResponseDto(post);
+        return postDetailResponseDto;
+    }
+
 
         return post;
     }

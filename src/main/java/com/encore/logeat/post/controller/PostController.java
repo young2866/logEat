@@ -4,6 +4,7 @@ import com.encore.logeat.common.dto.ResponseDto;
 import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostSecretUpdateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
+import com.encore.logeat.post.Dto.ResponseDto.PostDetailResponseDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostSearchResponseDto;
 import com.encore.logeat.post.Service.PostService;
 import com.encore.logeat.post.domain.Post;
@@ -76,4 +77,11 @@ public class PostController {
     public Page<PostSearchResponseDto> postMainViewLikeDesc(@PageableDefault(size = 9, sort = "likeCount", direction = Sort.Direction.DESC) Pageable pageable) {
         return postService.findAllAccessiblePosts(pageable);
     }
+
+    @GetMapping("/post/{id}/detail")
+    public ResponseEntity<PostDetailResponseDto> postIncludeTitleSearch(@PathVariable Long id) {
+        PostDetailResponseDto postDetailResponseDto = postService.postDetail(id);
+        return new ResponseEntity<>(postDetailResponseDto, HttpStatus.OK);
+    }
+
 }
