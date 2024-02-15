@@ -133,7 +133,7 @@ public class PostService {
 
     }
     public PostDetailResponseDto postDetail(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("not햣 found post"));
+        Post post = postRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("not found post"));
         PostDetailResponseDto postDetailResponseDto = PostDetailResponseDto.toPostDetailResponseDto(post);
         return postDetailResponseDto;
     }
