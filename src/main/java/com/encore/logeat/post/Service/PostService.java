@@ -1,16 +1,17 @@
 package com.encore.logeat.post.Service;
 
+import static com.encore.logeat.common.redis.CacheNames.POST;
+
 import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostSecretUpdateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
-import com.encore.logeat.post.Dto.ResponseDto.PostDetailResponseDto;
+import com.encore.logeat.post.dto.ResponseDto.PostDetailResponseDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostSearchResponseDto;
 import com.encore.logeat.post.domain.Post;
 import com.encore.logeat.post.repository.PostRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,8 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
-import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -156,6 +156,7 @@ public class PostService {
         return post;
     }
 
+    @Cacheable(cacheNames = POST, key = "#id")
     public PostDetailResponseDto postDetail(Long id) {
         Post post = postRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("not found post"));
         PostDetailResponseDto postDetailResponseDto = PostDetailResponseDto.toPostDetailResponseDto(post);
