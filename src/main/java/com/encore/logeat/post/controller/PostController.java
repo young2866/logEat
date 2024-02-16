@@ -80,6 +80,7 @@ public class PostController {
 
     @GetMapping("/post/{id}/detail")
     public ResponseEntity<PostDetailResponseDto> postIncludeTitleSearch(@PathVariable Long id) {
+        postService.addViewCountCache(id);
         PostDetailResponseDto postDetailResponseDto = postService.postDetail(id);
         return new ResponseEntity<>(postDetailResponseDto, HttpStatus.OK);
     }
