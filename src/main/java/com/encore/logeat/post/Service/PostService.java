@@ -199,7 +199,8 @@ public class PostService {
                 findFollowUserPost.add(postSearchResponseDto);
             }
         }
-
+        // PageImpl: Page 인터페이스 구현체
+        // PageImpl<>(페이지에 넣을 리스트, 페이징 데이터인 pageble 객체, 전체 항목수);
         return new PageImpl<>(findFollowUserPost, pageable, findFollowUserPost.size());
     }
 
