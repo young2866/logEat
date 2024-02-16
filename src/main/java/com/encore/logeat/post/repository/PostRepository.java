@@ -26,4 +26,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p JOIN p.user u WHERE (p.user.id = :userId OR p.secretYorN = 'N' OR p.secretYorN IS NULL) AND u.nickname LIKE %:userNickname%")
     Page<Post> findByUserNickname(@Param("userId") Long userId, @Param("userNickname") String userNickname, Pageable pageable);
+
+    @Query("SELECT p FROM Post p WHERE p.user.id = :followingUserId OR p.secretYorN = 'N' OR p.secretYorN IS NULL ORDER BY p.createdTime DESC")
+    List<Post> findLatestPostByUserFollowing(@Param("followingUserId") Long followingUserId);
+
+
+
+
+
+
 }

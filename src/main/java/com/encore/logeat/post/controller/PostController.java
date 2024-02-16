@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class PostController {
     private final PostService postService;
@@ -78,10 +80,17 @@ public class PostController {
         return postService.findAllAccessiblePosts(pageable);
     }
 
+    @GetMapping("/post/following/latest_post")
+    public Page<PostSearchResponseDto> postFollowingLatestPost(@PageableDefault(size = 9, sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable) {
+        return postService.postFollowingLatestPost(pageable);
+    }
+
     @GetMapping("/post/{id}/detail")
     public ResponseEntity<PostDetailResponseDto> postIncludeTitleSearch(@PathVariable Long id) {
         PostDetailResponseDto postDetailResponseDto = postService.postDetail(id);
         return new ResponseEntity<>(postDetailResponseDto, HttpStatus.OK);
     }
+
+
 
 }
