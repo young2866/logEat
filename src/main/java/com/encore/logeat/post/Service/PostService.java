@@ -189,12 +189,12 @@ public class PostService {
 
         for (Follow follow : followingList) {
             User following = follow.getFollowing();
-            // 팔로잉한 유저의 게시글 들을 가져와서 리스트에 담음
-            List<Post> followingPostList = postRepository.findLatestPostByUserFollowing(following.getId());
+            // 팔로잉한 유저의 게시글 들을 가져옴
+            Page<Post> followingPostList = postRepository.findLatestPostByUserFollowing(following.getId(),pageable);
             if (!followingPostList.isEmpty()) {
                 // findLatestPostByUserFollowing에서 최신글(비공개글 제외) 순서로 불러옴
-                // 따라서 리스트의 0번째를 꺼내면 팔로잉한 유저의 최신글을 가져옴
-                Post latestPost = followingPostList.get(0);
+                // 따라서 content의 0번째를 꺼내면 팔로잉한 유저의 최신글을 가져옴
+                Post latestPost = followingPostList.getContent().get(0);
                 PostSearchResponseDto postSearchResponseDto = PostSearchResponseDto.toPostSearchResponseDto(latestPost);
                 findFollowUserPost.add(postSearchResponseDto);
             }

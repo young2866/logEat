@@ -4,6 +4,7 @@ import com.encore.logeat.post.domain.Post;
 import com.encore.logeat.user.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,8 +28,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p JOIN p.user u WHERE (p.user.id = :userId OR p.secretYorN = 'N' OR p.secretYorN IS NULL) AND u.nickname LIKE %:userNickname%")
     Page<Post> findByUserNickname(@Param("userId") Long userId, @Param("userNickname") String userNickname, Pageable pageable);
 
-    @Query("SELECT p FROM Post p WHERE p.user.id = :followingUserId OR p.secretYorN = 'N' OR p.secretYorN IS NULL ORDER BY p.createdTime DESC")
-    List<Post> findLatestPostByUserFollowing(@Param("followingUserId") Long followingUserId);
+    @Query("SELECT p FROM Post p WHERE p.user.id = :followingUserId AND (p.secretYorN = 'N' OR p.secretYorN IS NULL) ORDER BY p.createdTime DESC")
+    Page<Post> findLatestPostByUserFollowing(@Param("followingUserId") Long followingUserId, Pageable pageable);
 
 
 
