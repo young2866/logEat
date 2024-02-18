@@ -3,15 +3,17 @@ package com.encore.logeat.user.controller;
 import com.encore.logeat.common.dto.ResponseDto;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.dto.request.UserCreateRequestDto;
+import com.encore.logeat.user.dto.request.UserInfoResponseDto;
+import com.encore.logeat.user.dto.request.UserInfoUpdateRequestDto;
 import com.encore.logeat.user.dto.request.UserLoginRequestDto;
 import com.encore.logeat.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
@@ -48,4 +50,24 @@ public class UserController {
 		ResponseDto responseDto = userService.getMyFollowing();
 		return new ResponseEntity<>(responseDto, HttpStatus.OK);
 	}
+
+	@GetMapping("/user/mypage")
+	public ResponseEntity<ResponseDto> myPage() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentUserName = authentication.getName();
+		Long userId = Long.parseLong(currentUserName);
+		User user = userService.findUserById(userId);
+		UserInfoResponseDto userInfo = new UserInfoResponseDto();
+		userInfo.setNickname(user.getNickname());
+		userInfo.setProfileImage(null);
+		userInfo.setIntroduce(user.getIntroduce());
+		return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "User info loaded successfully", userInfo), HttpStatus.OK);
+	}
+
+	@PatchMapping("/user/update")
+	public ResponseEntity<ResponseDto> updateUserInfo(UserInfoUpdateRequestDto userInfoupdateDto) {
+		userService.updateInfoUser(userInfoupdateDto);
+		return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "User updated successfully", userInfoupdateDto.getNickname()), HttpStatus.OK);
+	}
+
 }
