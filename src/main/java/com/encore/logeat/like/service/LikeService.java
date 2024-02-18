@@ -3,7 +3,10 @@ package com.encore.logeat.like.service;
 import com.encore.logeat.common.dto.ResponseDto;
 import com.encore.logeat.like.Repository.LikeRepository;
 import com.encore.logeat.like.domain.Like;
+import com.encore.logeat.post.Dto.ResponseDto.PostLikeWeekResponseDto;
 import com.encore.logeat.post.domain.Post;
+import com.encore.logeat.post.domain.PostLikeReport;
+import com.encore.logeat.post.repository.PostLikeReportRepository;
 import com.encore.logeat.post.repository.PostRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
@@ -23,12 +26,14 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final PostLikeReportRepository postLikeReportRepository;
 
     @Autowired
-    public LikeService(LikeRepository likeRepository, UserRepository userRepository, PostRepository postRepository) {
+    public LikeService(LikeRepository likeRepository, UserRepository userRepository, PostRepository postRepository, PostLikeReportRepository postLikeReportRepository) {
         this.likeRepository = likeRepository;
         this.userRepository = userRepository;
         this.postRepository = postRepository;
+        this.postLikeReportRepository = postLikeReportRepository;
     }
 
     @Transactional
@@ -56,6 +61,7 @@ public class LikeService {
                     .result(HttpStatus.OK)
                     .build();
             post.addLikeCount();
+            postLikeReportRepository.save(new PostLikeReport(post, post.getUser()));
 
         } else {
             Like like = likeList.get(0);
@@ -66,6 +72,7 @@ public class LikeService {
                     .result(HttpStatus.OK)
                     .build();
             post.reduceLikeCount();
+            postLikeReportRepository.delete(new PostLikeReport(post, post.getUser()));
         }
         return responseDto;
     }
