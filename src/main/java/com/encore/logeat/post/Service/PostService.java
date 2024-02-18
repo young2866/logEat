@@ -1,5 +1,8 @@
 package com.encore.logeat.post.Service;
 
+import com.encore.logeat.notification.domain.NotificationType;
+import com.encore.logeat.notification.dto.request.NotificationCreateDto;
+import com.encore.logeat.notification.service.NotificationService;
 import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostSecretUpdateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
@@ -9,6 +12,7 @@ import com.encore.logeat.post.domain.Post;
 import com.encore.logeat.post.repository.PostRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
@@ -26,10 +30,14 @@ import java.util.stream.Collectors;
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
-    public PostService(PostRepository postRepository, UserRepository userRepository) {
+    @Autowired
+    public PostService(PostRepository postRepository, UserRepository userRepository,
+        NotificationService notificationService) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -47,7 +55,15 @@ public class PostService {
                 .location(postCreateRequestDto.getLocation())
                 .user(user)
                 .build();
-        return postRepository.save(newPost);
+        Post save = postRepository.save(newPost);
+
+        NotificationCreateDto notificationCreateDto = NotificationCreateDto.builder()
+            .notificationType(NotificationType.POST)
+            .url_path("/post/" + save.getId() + "/detail")
+            .sender_id(userId)
+            .build();
+        notificationService.createNotification(notificationCreateDto);
+        return save;
     }
 
     @PreAuthorize("hasAuthority('USER')")

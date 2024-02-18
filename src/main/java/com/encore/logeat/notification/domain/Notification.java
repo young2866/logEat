@@ -27,9 +27,11 @@ public class Notification extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	private String senderName;
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "sender_id")
-	private User sender;
+	@JoinColumn(name = "provider_id")
+	private User provider;
 
 	private String url_path;
 
