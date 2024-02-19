@@ -61,7 +61,7 @@ public class RedisConfig {
 
         Map<String, RedisCacheConfiguration> redisCacheConfigMap = new HashMap<>();
         redisCacheConfigMap.put(CacheNames.POST, redisCacheConfiguration.entryTtl(
-            Duration.ofMinutes(3)));
+            Duration.ofMinutes(5)));
         redisCacheConfigMap.put(CacheNames.USER_PROFILE, redisCacheConfiguration.entryTtl(
             Duration.ofDays(1)));
         return RedisCacheManager.RedisCacheManagerBuilder
