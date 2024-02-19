@@ -5,11 +5,16 @@ import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostSecretUpdateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostDetailResponseDto;
+import com.encore.logeat.post.Dto.ResponseDto.PostLikeMonthResponseDto;
+import com.encore.logeat.post.Dto.ResponseDto.PostLikeWeekResponseDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostSearchResponseDto;
 import com.encore.logeat.post.domain.Post;
+import com.encore.logeat.post.domain.PostLikeReport;
+import com.encore.logeat.post.repository.PostLikeReportRepository;
 import com.encore.logeat.post.repository.PostRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
@@ -23,8 +28,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,10 +38,13 @@ import java.util.stream.Collectors;
 @Transactional
 public class PostService {
     private final PostRepository postRepository;
+    private final PostLikeReportRepository postLikeReportRepository;
     private final UserRepository userRepository;
 
-    public PostService(PostRepository postRepository, UserRepository userRepository) {
+    @Autowired
+    public PostService(PostRepository postRepository, PostLikeReportRepository postLikeReportRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
+        this.postLikeReportRepository = postLikeReportRepository;
         this.userRepository = userRepository;
     }
 
@@ -168,6 +177,41 @@ public class PostService {
         PostDetailResponseDto postDetailResponseDto = PostDetailResponseDto.toPostDetailResponseDto(post);
         return postDetailResponseDto;
     }
+
+
+    public List<PostLikeWeekResponseDto> postLikeWeekResponse() {
+        PageRequest pageRequest = PageRequest.of(0, 3);
+        LocalDateTime end = LocalDateTime.now().plusDays(1);
+        LocalDateTime start = end.minusDays(7);
+
+        return postLikeReportRepository.findPostLikeReportBy(start, end, pageRequest)
+                .stream()
+                .map(result -> PostLikeWeekResponseDto.builder()
+                        .postId(result.getPost().getId())
+                        .title(result.getPost().getTitle())
+                        .category(result.getPost().getCategory())
+                        .postImage(null)
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+
+    public List<PostLikeMonthResponseDto> postLikeMonthResponse() {
+        PageRequest pageRequest = PageRequest.of(0, 3);
+        LocalDateTime end = LocalDateTime.now().plusDays(1);
+        LocalDateTime start = end.minusMonths(1);
+
+        return postLikeReportRepository.findPostLikeReportBy(start, end, pageRequest)
+                .stream()
+                .map(result -> PostLikeMonthResponseDto.builder()
+                        .postId(result.getPost().getId())
+                        .title(result.getPost().getTitle())
+                        .category(result.getPost().getCategory())
+                        .postImage(null)
+                        .build())
+                .collect(Collectors.toList());
+    }
+
 
     @PreAuthorize("hasAuthority('USER')")
     public Page<PostSearchResponseDto> postFollowingLatestPost(Pageable pageable) {
