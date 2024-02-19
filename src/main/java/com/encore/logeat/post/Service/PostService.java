@@ -172,15 +172,9 @@ public class PostService {
     @PreAuthorize("hasAuthority('USER')")
     public Page<PostSearchResponseDto> postFollowingLatestPost(Pageable pageable) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = null;
-        if (authentication != null && authentication.isAuthenticated() && !"anonymous".equals(authentication.getName())) {
-            try {
-                String[] split = authentication.getName().split(":");
-                userId = Long.parseLong(split[0]);
-            } catch (NumberFormatException e) {
-                System.out.println("Error parsing user ID from authentication.");
-            }
-        }
+        String[] split = authentication.getName().split(":");
+        long userId = Long.parseLong(split[0]);
+
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("user not found"));
         // 로그인한 user가 팔로우한 리스트를 가져옴
         List<Follow> followingList = user.getFollowingList();
