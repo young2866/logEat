@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 @RestController
 public class PostController {
@@ -81,12 +82,16 @@ public class PostController {
         return postService.findAllAccessiblePosts(pageable);
     }
 
+    @GetMapping("/post/following/latest-post")
+    public Page<PostSearchResponseDto> postFollowingLatestPost(@PageableDefault(size = 9, sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable) {
+        return postService.postFollowingLatestPost(pageable);
+    }
+
     @GetMapping("/post/{id}/detail")
     public ResponseEntity<PostDetailResponseDto> postIncludeTitleSearch(@PathVariable Long id) {
         PostDetailResponseDto postDetailResponseDto = postService.postDetail(id);
         return new ResponseEntity<>(postDetailResponseDto, HttpStatus.OK);
     }
-
 
     @GetMapping("/post/like/weeks")
     public ResponseEntity<?> postLikeWeeks() {
@@ -95,7 +100,6 @@ public class PostController {
                 .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
                 .body(postService.postLikeWeekResponse());
     }
-
 
     @GetMapping("/post/like/month")
     public ResponseEntity<?> postLikeMonth() {
