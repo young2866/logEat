@@ -80,7 +80,7 @@ public class PostController {
         return postService.findAllAccessiblePosts(pageable);
     }
 
-    @GetMapping("/post/following/latest_post")
+    @GetMapping("/post/following/latest-post")
     public Page<PostSearchResponseDto> postFollowingLatestPost(@PageableDefault(size = 9, sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return postService.postFollowingLatestPost(pageable);
     }
