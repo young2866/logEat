@@ -111,10 +111,6 @@ public class UserService {
 		}).collect(Collectors.toList());
 		return new ResponseDto(HttpStatus.OK, "팔로우 하고 있는 유저의 수는 " + result.size() + "입니다.", result);
 	}
-	public User findUserById(Long userId) {
-		return userRepository.findById(userId)
-				.orElseThrow(() -> new IllegalArgumentException("유저의 아이디를 찾을 수 없습니다. " + userId));
-	}
 
 	@Transactional
 	public void updateInfoUser(UserInfoUpdateRequestDto userInfoupdateDto) {
