@@ -1,5 +1,16 @@
 package com.encore.logeat.post.Service;
 
+
+import static com.encore.logeat.common.redis.CacheNames.POST;
+import static com.encore.logeat.common.redis.CacheNames.createPostCacheKey;
+import static com.encore.logeat.common.redis.CacheNames.createViewCountCacheKey;
+
+import com.encore.logeat.common.redis.RedisService;
+import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
+import com.encore.logeat.post.Dto.RequestDto.PostSecretUpdateRequestDto;
+import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
+import com.encore.logeat.post.dto.ResponseDto.PostDetailResponseDto;
+
 import com.encore.logeat.notification.domain.NotificationType;
 import com.encore.logeat.notification.dto.request.NotificationCreateDto;
 import com.encore.logeat.notification.service.NotificationService;
@@ -10,6 +21,7 @@ import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostDetailResponseDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostLikeMonthResponseDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostLikeWeekResponseDto;
+
 import com.encore.logeat.post.Dto.ResponseDto.PostSearchResponseDto;
 import com.encore.logeat.post.domain.Post;
 import com.encore.logeat.post.domain.PostLikeReport;
@@ -17,6 +29,9 @@ import com.encore.logeat.post.repository.PostLikeReportRepository;
 import com.encore.logeat.post.repository.PostRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -24,18 +39,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.time.Duration;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Objects;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -44,14 +63,16 @@ public class PostService {
     private final PostLikeReportRepository postLikeReportRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final RedisService redisService;
 
     @Autowired
     public PostService(PostRepository postRepository, PostLikeReportRepository postLikeReportRepository, UserRepository userRepository, 
-                       NotificationService notificationService) {
+                       NotificationService notificationService, RedisService redisService) {
         this.postRepository = postRepository;
         this.postLikeReportRepository = postLikeReportRepository;
         this.userRepository = userRepository;
         this.notificationService = notificationService;
+        this.redisService = redisService;
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -186,12 +207,47 @@ public class PostService {
         return post;
     }
 
+    @Cacheable(cacheNames = POST, key = "#id")
     public PostDetailResponseDto postDetail(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("not found post"));
+        Post post = findById(id);
         PostDetailResponseDto postDetailResponseDto = PostDetailResponseDto.toPostDetailResponseDto(post);
         return postDetailResponseDto;
     }
 
+
+    public void addViewCountCache(Long postId) {
+        String viewCntKey = createViewCountCacheKey(postId);
+        if (!redisService.getValues(viewCntKey).equals("false")) {
+            redisService.increment(viewCntKey);
+            return;
+        }
+
+        redisService.setValues(viewCntKey, String.valueOf(findById(postId).getViewCount() + 1),
+            Duration.ofMinutes(3));
+    }
+
+    @Scheduled(cron = "0 0/3 * * * ?")
+    public void applyViewCountToRDB() {
+        Set<String> viewCntKeys = redisService.keys("postViewCnt*");
+        if(Objects.requireNonNull(viewCntKeys).isEmpty()) return;
+
+        for (String viewCntKey : viewCntKeys) {
+            Long postId = extractPostIdFromKey(viewCntKey);
+            Integer viewCount = Integer.parseInt(redisService.getValues(viewCntKey));
+
+            postRepository.applyViewCntToRDB(postId, viewCount);
+            redisService.deleteValues(viewCntKey);
+            redisService.deleteValues(createPostCacheKey(postId));
+        }
+    }
+    private Long extractPostIdFromKey(String viewCntKey) {
+        return Long.parseLong(viewCntKey.split("::")[1]);
+    }
+
+    public Post findById(Long postId) {
+        return postRepository.findById(postId)
+            .orElseThrow(() -> new EntityNotFoundException("해당 글을 찾을 수 없습니다."));
+    }
 
     public List<PostLikeWeekResponseDto> postLikeWeekResponse() {
         PageRequest pageRequest = PageRequest.of(0, 3);
