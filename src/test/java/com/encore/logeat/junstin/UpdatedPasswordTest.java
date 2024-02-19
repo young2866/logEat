@@ -50,7 +50,7 @@ public class UpdatedPasswordTest {
         String changePwd = passwordEncoder.encode("5555");
 
         if(b) {
-            findUser.userUpdatedPassword(changePwd);
+            findUser.updatedPassword(changePwd);
         }
 
         Assertions.assertThat(passwordEncoder.matches("5555", findUser.getPassword())).isEqualTo(true);
