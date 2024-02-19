@@ -4,6 +4,7 @@ package com.encore.logeat.user.domain;
 
 import com.encore.logeat.common.entity.BaseTimeEntity;
 import com.encore.logeat.follow.domain.Follow;
+import com.encore.logeat.notification.domain.Notification;
 import com.encore.logeat.post.domain.Post;
 import java.util.List;
 import javax.persistence.Column;
@@ -47,7 +48,10 @@ public class User extends BaseTimeEntity {
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private List<Post> postList;
 
-	@OneToMany(mappedBy = "following",fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
+	private List<Notification> notifications;
+
+	@OneToMany(mappedBy = "following", fetch = FetchType.LAZY)
 	private List<Follow> followerList; // 유저를 팔로우
 
 	@OneToMany(mappedBy = "follower",fetch = FetchType.LAZY)

@@ -1,5 +1,8 @@
 package com.encore.logeat.post.Service;
 
+import com.encore.logeat.notification.domain.NotificationType;
+import com.encore.logeat.notification.dto.request.NotificationCreateDto;
+import com.encore.logeat.notification.service.NotificationService;
 import com.encore.logeat.follow.domain.Follow;
 import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostSecretUpdateRequestDto;
@@ -40,12 +43,15 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostLikeReportRepository postLikeReportRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     @Autowired
-    public PostService(PostRepository postRepository, PostLikeReportRepository postLikeReportRepository, UserRepository userRepository) {
+    public PostService(PostRepository postRepository, PostLikeReportRepository postLikeReportRepository, UserRepository userRepository, 
+                       NotificationService notificationService) {
         this.postRepository = postRepository;
         this.postLikeReportRepository = postLikeReportRepository;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -63,7 +69,15 @@ public class PostService {
                 .location(postCreateRequestDto.getLocation())
                 .user(user)
                 .build();
-        return postRepository.save(newPost);
+        Post save = postRepository.save(newPost);
+
+        NotificationCreateDto notificationCreateDto = NotificationCreateDto.builder()
+            .notificationType(NotificationType.POST)
+            .url_path("/post/" + save.getId() + "/detail")
+            .sender_id(userId)
+            .build();
+        notificationService.createNotification(notificationCreateDto);
+        return save;
     }
 
     @PreAuthorize("hasAuthority('USER')")
