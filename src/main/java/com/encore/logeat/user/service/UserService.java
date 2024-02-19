@@ -126,8 +126,20 @@ public class UserService {
 		user.updateUserInfo(userInfoupdateDto.getNickname(), userInfoupdateDto.getIntroduce());
 	}
 
+	@PreAuthorize("hasAuthority('USER')")
+	public UserInfoResponseDto getMypage() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentUserName = authentication.getName();
+		Long userId = Long.parseLong(currentUserName);
+		User user = userRepository.findById(userId).orElseThrow(() ->  new EntityNotFoundException("유저의 아이디를 찾을 수 없습니다. " + userId));
+		UserInfoResponseDto userInfo = new UserInfoResponseDto();
+		userInfo.setNickname(user.getNickname());
+		userInfo.setProfileImage(null);
+		userInfo.setIntroduce(user.getIntroduce());
 
+		return userInfo;
 
+	}
 
 
 //	@Transactional

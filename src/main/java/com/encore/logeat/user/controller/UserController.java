@@ -53,14 +53,7 @@ public class UserController {
 
 	@GetMapping("/user/mypage")
 	public ResponseEntity<ResponseDto> myPage() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentUserName = authentication.getName();
-		Long userId = Long.parseLong(currentUserName);
-		User user = userService.findUserById(userId);
-		UserInfoResponseDto userInfo = new UserInfoResponseDto();
-		userInfo.setNickname(user.getNickname());
-		userInfo.setProfileImage(null);
-		userInfo.setIntroduce(user.getIntroduce());
+		UserInfoResponseDto userInfo = userService.getMypage();
 		return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "User info loaded successfully", userInfo), HttpStatus.OK);
 	}
 
