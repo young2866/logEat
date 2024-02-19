@@ -4,6 +4,7 @@ import com.encore.logeat.post.domain.Post;
 import com.encore.logeat.user.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -32,5 +33,15 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Transactional
     @Modifying
     @Query("UPDATE Post p SET p.viewCount = :viewCount WHERE p.id = :postId")
-	void applyViewCntToRDB(@Param(("postId")) Long postId, @Param("viewCount") Integer viewCount);
+  	void applyViewCntToRDB(@Param(("postId")) Long postId, @Param("viewCount") Integer viewCount);
+
+    @Query("SELECT p FROM Post p WHERE p.user.id = :followingUserId AND (p.secretYorN = 'N' OR p.secretYorN IS NULL) ORDER BY p.createdTime DESC")
+    Page<Post> findLatestPostByUserFollowing(@Param("followingUserId") Long followingUserId, Pageable pageable);
+
+
+
+
+
+
+
 }
