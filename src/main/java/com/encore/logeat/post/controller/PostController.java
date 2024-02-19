@@ -12,12 +12,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.concurrent.TimeUnit;
 
 @RestController
 public class PostController {
@@ -85,24 +82,6 @@ public class PostController {
     public ResponseEntity<PostDetailResponseDto> postIncludeTitleSearch(@PathVariable Long id) {
         PostDetailResponseDto postDetailResponseDto = postService.postDetail(id);
         return new ResponseEntity<>(postDetailResponseDto, HttpStatus.OK);
-    }
-
-
-    @GetMapping("/post/like/weeks")
-    public ResponseEntity<?> postLikeWeeks() {
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(postService.postLikeWeekResponse());
-    }
-
-
-    @GetMapping("/post/like/month")
-    public ResponseEntity<?> postLikeMonth() {
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
-                .body(postService.postLikeMonthResponse());
     }
 
 }
