@@ -8,6 +8,7 @@ import com.encore.logeat.notification.dto.response.NotificationListResponseDto;
 import com.encore.logeat.notification.repository.NotificationRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ public class NotificationService {
 			.orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
 		List<User> users = sender.getFollowerList().stream().map(Follow::getFollower)
 			.collect(Collectors.toList());
+		List<Notification> notifications = new ArrayList<>();
 		for (User user : users) {
 			Notification notification = Notification.builder()
 				.notificationType(notificationCreateDto.getNotificationType())
@@ -47,9 +49,9 @@ public class NotificationService {
 				.url_path(notificationCreateDto.getUrl_path())
 				.provider(user)
 				.build();
-			notificationRepository.save(notification);
+			notifications.add(notification);
 		}
-
+		notificationRepository.saveAll(notifications);
 	}
 
 	@PreAuthorize("hasAuthority('USER')")
