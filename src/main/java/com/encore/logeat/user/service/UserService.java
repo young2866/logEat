@@ -2,7 +2,6 @@ package com.encore.logeat.user.service;
 
 import com.encore.logeat.common.dto.ResponseDto;
 import com.encore.logeat.common.jwt.JwtTokenProvider;
-import com.encore.logeat.common.redis.RedisService;
 import com.encore.logeat.mail.service.EmailService;
 import com.encore.logeat.common.jwt.refresh.UserRefreshToken;
 import com.encore.logeat.common.jwt.refresh.UserRefreshTokenRepository;
@@ -14,18 +13,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -107,6 +101,14 @@ public class UserService {
 			return follow.getFollowing().getNickname();
 		}).collect(Collectors.toList());
 		return new ResponseDto(HttpStatus.OK, "팔로우 하고 있는 유저의 수는 " + result.size() + "입니다.", result);
+	}
+
+	public boolean nicknameDuplicateCheck(String nickname) {
+		return userRepository.existsByNickname(nickname);
+	}
+	public boolean emailDuplicateCheck(String email) {
+		return userRepository.existsByEmail(email);
+
 	}
 
 //	@Transactional

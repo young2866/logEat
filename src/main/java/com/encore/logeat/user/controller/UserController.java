@@ -1,26 +1,32 @@
 package com.encore.logeat.user.controller;
 
 import com.encore.logeat.common.dto.ResponseDto;
+import com.encore.logeat.mail.service.EmailService;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.dto.request.UserCreateRequestDto;
 import com.encore.logeat.user.dto.request.UserLoginRequestDto;
 import com.encore.logeat.user.service.UserService;
+import java.util.HashMap;
+import javax.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class UserController {
 
 	private final UserService userService;
+	private final EmailService emailService;
 
 	@Autowired
-	public UserController(UserService userService) {
+	public UserController(UserService userService, EmailService emailService) {
 		this.userService = userService;
+		this.emailService = emailService;
 	}
 
 	@PostMapping("/user/new")
@@ -43,9 +49,41 @@ public class UserController {
 		ResponseDto responseDto = userService.getMyFollower();
 		return new ResponseEntity<>(responseDto, HttpStatus.OK);
 	}
+
 	@GetMapping("/user/myfollowing")
 	public ResponseEntity<ResponseDto> myFollowing() {
 		ResponseDto responseDto = userService.getMyFollowing();
 		return new ResponseEntity<>(responseDto, HttpStatus.OK);
+	}
+
+	@GetMapping("/checkNickname")
+	public ResponseEntity<Object> userNicknameDuplicateCheck(@RequestParam String nickname) {
+		boolean isDuplicate = userService.nicknameDuplicateCheck(nickname);
+
+		if (isDuplicate) {
+			return ResponseEntity.ok().body(new HashMap<String, Object>() {{
+				put("result", false);
+				put("message", "이미 사용 중인 닉네임입니다.");
+			}});
+		} else {
+			return ResponseEntity.ok().body(new HashMap<String, Object>() {{
+				put("result", true);
+			}});
+		}
+	}
+	@GetMapping("/checkEmail")
+	public ResponseEntity<Object> userEmailDuplicateCheck(@RequestParam String email) {
+		boolean isDuplicate = userService.emailDuplicateCheck(email);
+
+		if (isDuplicate) {
+			return ResponseEntity.ok().body(new HashMap<String, Object>() {{
+				put("result", false);
+				put("message", "이미 사용 중인 이메일입니다.");
+			}});
+		} else {
+			return ResponseEntity.ok().body(new HashMap<String, Object>() {{
+				put("result", true);
+			}});
+		}
 	}
 }
