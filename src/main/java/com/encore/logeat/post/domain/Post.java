@@ -34,7 +34,8 @@ public class Post extends BaseTimeEntity {
 	private String imagePath;
 	private String location;
 	private String category;
-	private int viewCount;
+	@Builder.Default
+	private int viewCount = 0;
 	@Builder.Default
 	@Column(name = "secret_y_or_n")
 	private String secretYorN = "N"; // 공개 여부

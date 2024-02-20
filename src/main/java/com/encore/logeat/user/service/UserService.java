@@ -7,6 +7,8 @@ import com.encore.logeat.common.jwt.refresh.UserRefreshToken;
 import com.encore.logeat.common.jwt.refresh.UserRefreshTokenRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.dto.request.UserCreateRequestDto;
+import com.encore.logeat.user.dto.request.UserInfoResponseDto;
+import com.encore.logeat.user.dto.request.UserInfoUpdateRequestDto;
 import com.encore.logeat.user.dto.request.UserLoginRequestDto;
 import com.encore.logeat.user.repository.UserRepository;
 import java.util.HashMap;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -108,6 +111,30 @@ public class UserService {
 	}
 	public boolean emailDuplicateCheck(String email) {
 		return userRepository.existsByEmail(email);
+	}
+
+	@Transactional
+	public void updateInfoUser(UserInfoUpdateRequestDto userInfoupdateDto) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentUserName = authentication.getName();
+		Long userId = Long.parseLong(currentUserName);
+		User user = userRepository.findById(userId)
+					.orElseThrow(() -> new EntityNotFoundException("유저의 아이디를 찾을 수 없습니다. " + userId));
+		user.updateUserInfo(userInfoupdateDto.getNickname(), userInfoupdateDto.getIntroduce());
+	}
+
+	@PreAuthorize("hasAuthority('USER')")
+	public UserInfoResponseDto getMypage() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentUserName = authentication.getName();
+		Long userId = Long.parseLong(currentUserName);
+		User user = userRepository.findById(userId).orElseThrow(() ->  new EntityNotFoundException("유저의 아이디를 찾을 수 없습니다. " + userId));
+		UserInfoResponseDto userInfo = new UserInfoResponseDto();
+		userInfo.setNickname(user.getNickname());
+		userInfo.setProfileImage(null);
+		userInfo.setIntroduce(user.getIntroduce());
+
+		return userInfo;
 
 	}
 

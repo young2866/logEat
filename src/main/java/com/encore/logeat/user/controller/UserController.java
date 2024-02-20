@@ -7,7 +7,6 @@ import com.encore.logeat.user.dto.request.UserCreateRequestDto;
 import com.encore.logeat.user.dto.request.UserLoginRequestDto;
 import com.encore.logeat.user.service.UserService;
 import java.util.HashMap;
-import javax.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -85,5 +84,16 @@ public class UserController {
 				put("result", true);
 			}});
 		}
+	}
+	@GetMapping("/user/mypage")
+	public ResponseEntity<ResponseDto> myPage() {
+		UserInfoResponseDto userInfo = userService.getMypage();
+		return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "User info loaded successfully", userInfo), HttpStatus.OK);
+	}
+
+	@PatchMapping("/user/update")
+	public ResponseEntity<ResponseDto> updateUserInfo(UserInfoUpdateRequestDto userInfoupdateDto) {
+		userService.updateInfoUser(userInfoupdateDto);
+		return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "User updated successfully", userInfoupdateDto.getNickname()), HttpStatus.OK);
 	}
 }
