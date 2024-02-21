@@ -76,7 +76,8 @@ public class LikeService {
                     .result(HttpStatus.OK)
                     .build();
             post.reduceLikeCount();
-            postLikeReportRepository.delete(new PostLikeReport(post, post.getUser()));
+            PostLikeReport findReport = postLikeReportRepository.findPostLikeReportByPostIdAndUserId(like.getPost().getId(), like.getUser().getId()).orElseThrow(() -> new EntityNotFoundException("좋아요 기록이 없습니다."));
+            postLikeReportRepository.delete(findReport);
         }
         return responseDto;
     }

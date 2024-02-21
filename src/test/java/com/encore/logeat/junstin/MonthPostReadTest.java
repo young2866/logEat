@@ -1,5 +1,7 @@
 package com.encore.logeat.junstin;
 
+import com.encore.logeat.like.Repository.LikeRepository;
+import com.encore.logeat.like.domain.Like;
 import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
 import com.encore.logeat.post.Service.PostService;
 import com.encore.logeat.post.domain.Post;
@@ -11,6 +13,7 @@ import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
 import com.encore.logeat.user.service.UserService;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -33,11 +36,14 @@ public class MonthPostReadTest {
     private PostLikeReportRepository postLikeReportRepository;
     private UserRepository userRepository;
 
+    private LikeRepository likeRepository;
+
     @Autowired
-    public MonthPostReadTest(PostRepository postRepository, PostLikeReportRepository postLikeReportRepository, UserRepository userRepository) {
+    public MonthPostReadTest(PostRepository postRepository, PostLikeReportRepository postLikeReportRepository, UserRepository userRepository, LikeRepository likeRepository) {
         this.postRepository = postRepository;
         this.postLikeReportRepository = postLikeReportRepository;
         this.userRepository = userRepository;
+        this.likeRepository = likeRepository;
     }
 
 
@@ -57,6 +63,21 @@ public class MonthPostReadTest {
 
         Assertions.assertThat(3).isEqualTo(list.size());
         //Assertions.assertThat(5).isEqualTo(list.size());
+    }
+
+    @Test
+    @DisplayName("좋아요 기록 삭제 테스트")
+    public void 좋아요기록삭제테스트() {
+        List<PostLikeReport> all = postLikeReportRepository.findAll();
+
+        List<Like> findLike = likeRepository.findLikesByUserIdAndPostId(24L, 7L);
+        Like like = findLike.get(0);
+
+        PostLikeReport findPLR = postLikeReportRepository.findPostLikeReportByPostIdAndUserId(7L, 24L).orElse(null);
+        postLikeReportRepository.delete(findPLR);
+
+        Assertions.assertThat(all.size()).isEqualTo(1);
+
     }
 
 
