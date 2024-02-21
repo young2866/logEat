@@ -8,6 +8,7 @@ import com.encore.logeat.post.Dto.ResponseDto.PostDetailResponseDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostSearchResponseDto;
 import com.encore.logeat.post.Service.PostService;
 import com.encore.logeat.post.domain.Post;
+import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,6 +16,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class PostController {
@@ -82,6 +84,29 @@ public class PostController {
     public ResponseEntity<PostDetailResponseDto> postIncludeTitleSearch(@PathVariable Long id) {
         PostDetailResponseDto postDetailResponseDto = postService.postDetail(id);
         return new ResponseEntity<>(postDetailResponseDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/post/image/upload")
+    public ResponseEntity<?> postImageUpload(@RequestParam("upload") MultipartFile request) {
+        try {
+            String originName = request.getOriginalFilename();
+
+            String newFileName = java.util.UUID.randomUUID().toString() + "@" + originName;
+
+            String imageUrl = postService.saveFile(request, newFileName);
+
+
+            return ResponseEntity.ok(Map.of(
+                "uploaded", true,
+                "fileName", newFileName,
+                "originName", originName,
+                "url", imageUrl));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                "uploaded", false,
+                "error", Map.of("message", "파일을 업로드하지 못했습니다")));
+        }
     }
 
 }

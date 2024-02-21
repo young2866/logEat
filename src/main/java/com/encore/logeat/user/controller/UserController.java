@@ -1,13 +1,11 @@
 package com.encore.logeat.user.controller;
 
 import com.encore.logeat.common.dto.ResponseDto;
-import com.encore.logeat.mail.service.EmailService;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.dto.request.UserCreateRequestDto;
 import com.encore.logeat.user.dto.request.UserLoginRequestDto;
 import com.encore.logeat.user.service.UserService;
 import java.util.HashMap;
-import javax.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
 	private final UserService userService;
-	private final EmailService emailService;
 
 	@Autowired
-	public UserController(UserService userService, EmailService emailService) {
+	public UserController(UserService userService) {
 		this.userService = userService;
-		this.emailService = emailService;
 	}
 
 	@PostMapping("/user/new")

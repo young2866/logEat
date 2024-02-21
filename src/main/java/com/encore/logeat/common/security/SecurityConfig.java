@@ -32,7 +32,7 @@ public class SecurityConfig {
 		httpSecurity.csrf(csrf -> csrf.disable())
 			.cors().configurationSource(request -> {
 				CorsConfiguration corsConfiguration = new CorsConfiguration();
-				corsConfiguration.setAllowedOrigins(List.of("http://localhost:8082"));
+				corsConfiguration.setAllowedOrigins(List.of("http://localhost:8081"));
 				corsConfiguration.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
 				corsConfiguration.setAllowedHeaders(List.of("*"));
 				return corsConfiguration;

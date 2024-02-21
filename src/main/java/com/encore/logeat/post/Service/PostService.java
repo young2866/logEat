@@ -1,5 +1,7 @@
 package com.encore.logeat.post.Service;
 
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.encore.logeat.common.s3.S3Config;
 import com.encore.logeat.notification.domain.NotificationType;
 import com.encore.logeat.notification.dto.request.NotificationCreateDto;
 import com.encore.logeat.notification.service.NotificationService;
@@ -12,9 +14,9 @@ import com.encore.logeat.post.domain.Post;
 import com.encore.logeat.post.repository.PostRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.stream.Collectors;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
@@ -31,13 +34,18 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final S3Config s3Config;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
     @Autowired
     public PostService(PostRepository postRepository, UserRepository userRepository,
-        NotificationService notificationService) {
+        NotificationService notificationService, S3Config s3Config) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.notificationService = notificationService;
+        this.s3Config = s3Config;
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -176,5 +184,16 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("not found post"));
         PostDetailResponseDto postDetailResponseDto = PostDetailResponseDto.toPostDetailResponseDto(post);
         return postDetailResponseDto;
+    }
+
+    public String saveFile(MultipartFile request, String newFileName) throws IOException {
+
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(request.getSize());
+        metadata.setContentType(request.getContentType());
+
+        s3Config.amazonS3Client().putObject(bucket, newFileName, request.getInputStream(), metadata);
+        return s3Config.amazonS3Client().getUrl(bucket, newFileName).toString();
+
     }
 }
