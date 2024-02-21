@@ -1,5 +1,7 @@
 package com.encore.logeat.post.Service;
 
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.encore.logeat.common.s3.S3Config;
 
 import static com.encore.logeat.common.redis.CacheNames.POST;
 import static com.encore.logeat.common.redis.CacheNames.createPostCacheKey;
@@ -10,11 +12,11 @@ import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostSecretUpdateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
 import com.encore.logeat.post.dto.ResponseDto.PostDetailResponseDto;
-
 import com.encore.logeat.notification.domain.NotificationType;
 import com.encore.logeat.notification.dto.request.NotificationCreateDto;
 import com.encore.logeat.notification.service.NotificationService;
 import com.encore.logeat.follow.domain.Follow;
+
 import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostSecretUpdateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
@@ -23,23 +25,19 @@ import com.encore.logeat.post.Dto.ResponseDto.PostLikeWeekResponseDto;
 
 import com.encore.logeat.post.Dto.ResponseDto.PostSearchResponseDto;
 import com.encore.logeat.post.domain.Post;
-import com.encore.logeat.post.domain.PostLikeReport;
 import com.encore.logeat.post.repository.PostLikeReportRepository;
 import com.encore.logeat.post.repository.PostRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
-
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,8 +48,8 @@ import java.time.LocalDateTime;
 import java.time.Duration;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.web.multipart.MultipartFile;
 import java.util.Objects;
 import java.util.Set;
 
@@ -62,15 +60,21 @@ public class PostService {
     private final PostLikeReportRepository postLikeReportRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final S3Config s3Config;
     private final RedisService redisService;
 
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
     @Autowired
-    public PostService(PostRepository postRepository, PostLikeReportRepository postLikeReportRepository, UserRepository userRepository, 
-                       NotificationService notificationService, RedisService redisService) {
+    public PostService(PostRepository postRepository, UserRepository userRepository,
+        NotificationService notificationService, S3Config s3Config, RedisService redisService, PostLikeReportRepository postLikeReportRepository) {
+
         this.postRepository = postRepository;
         this.postLikeReportRepository = postLikeReportRepository;
         this.userRepository = userRepository;
         this.notificationService = notificationService;
+        this.s3Config = s3Config;
         this.redisService = redisService;
     }
 
@@ -213,7 +217,16 @@ public class PostService {
         return postDetailResponseDto;
     }
 
+    public String saveFile(MultipartFile request, String newFileName) throws IOException {
 
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(request.getSize());
+        metadata.setContentType(request.getContentType());
+
+        s3Config.amazonS3Client().putObject(bucket, newFileName, request.getInputStream(), metadata);
+        return s3Config.amazonS3Client().getUrl(bucket, newFileName).toString();
+
+    }
     public void addViewCountCache(Long postId) {
         String viewCntKey = createViewCountCacheKey(postId);
         if (!redisService.getValues(viewCntKey).equals("false")) {
@@ -280,7 +293,6 @@ public class PostService {
                         .build())
                 .collect(Collectors.toList());
     }
-
 
     @PreAuthorize("hasAuthority('USER')")
     public Page<PostSearchResponseDto> postFollowingLatestPost(Pageable pageable) {
