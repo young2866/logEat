@@ -1,6 +1,7 @@
 package com.encore.logeat.mail.service;
 
 import com.encore.logeat.common.redis.RedisService;
+import com.encore.logeat.mail.EmailAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
@@ -14,9 +15,10 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Stack;
 
 @Service
-public class EmailService {
+public class EmailService implements EmailAuthService {
 
     private final JavaMailSender javaMailSender;
     private final RedisService redisService;
@@ -42,6 +44,7 @@ public class EmailService {
 
 
     @Async
+    @Override
     public String createEmailAuthNumber(String email, String authNumber) {
         Duration duration = Duration.ofMinutes(3);
         redisService.setValues(email, authNumber, duration);

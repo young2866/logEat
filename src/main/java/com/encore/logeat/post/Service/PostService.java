@@ -18,7 +18,6 @@ import com.encore.logeat.follow.domain.Follow;
 import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostSecretUpdateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
-import com.encore.logeat.post.Dto.ResponseDto.PostDetailResponseDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostLikeMonthResponseDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostLikeWeekResponseDto;
 
