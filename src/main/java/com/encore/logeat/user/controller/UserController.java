@@ -3,17 +3,15 @@ package com.encore.logeat.user.controller;
 import com.encore.logeat.common.dto.ResponseDto;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.dto.request.UserCreateRequestDto;
+import com.encore.logeat.user.dto.request.UserInfoResponseDto;
+import com.encore.logeat.user.dto.request.UserInfoUpdateRequestDto;
 import com.encore.logeat.user.dto.request.UserLoginRequestDto;
 import com.encore.logeat.user.service.UserService;
 import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
