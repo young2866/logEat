@@ -4,7 +4,7 @@ import com.encore.logeat.common.dto.ResponseDto;
 import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostSecretUpdateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
-import com.encore.logeat.post.Dto.ResponseDto.PostDetailResponseDto;
+import com.encore.logeat.post.dto.ResponseDto.PostDetailResponseDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostSearchResponseDto;
 import com.encore.logeat.post.Service.PostService;
 import com.encore.logeat.post.domain.Post;
@@ -13,10 +13,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.concurrent.TimeUnit;
 
 @RestController
 public class PostController {
@@ -80,12 +83,17 @@ public class PostController {
         return postService.findAllAccessiblePosts(pageable);
     }
 
+    @GetMapping("/post/following/latest-post")
+    public Page<PostSearchResponseDto> postFollowingLatestPost(@PageableDefault(size = 9, sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable) {
+        return postService.postFollowingLatestPost(pageable);
+    }
+
     @GetMapping("/post/{id}/detail")
     public ResponseEntity<PostDetailResponseDto> postIncludeTitleSearch(@PathVariable Long id) {
+        postService.addViewCountCache(id);
         PostDetailResponseDto postDetailResponseDto = postService.postDetail(id);
         return new ResponseEntity<>(postDetailResponseDto, HttpStatus.OK);
     }
-
     @PostMapping("/post/image/upload")
     public ResponseEntity<?> postImageUpload(@RequestParam("upload") MultipartFile request) {
         try {
@@ -94,7 +102,6 @@ public class PostController {
             String newFileName = java.util.UUID.randomUUID().toString() + "@" + originName;
 
             String imageUrl = postService.saveFile(request, newFileName);
-
 
             return ResponseEntity.ok(Map.of(
                 "uploaded", true,
@@ -108,5 +115,19 @@ public class PostController {
                 "error", Map.of("message", "파일을 업로드하지 못했습니다")));
         }
     }
+    @GetMapping("/post/like/weeks")
+    public ResponseEntity<?> postLikeWeeks() {
 
+        return ResponseEntity.status(HttpStatus.OK)
+                .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
+                .body(postService.postLikeWeekResponse());
+    }
+
+    @GetMapping("/post/like/month")
+    public ResponseEntity<?> postLikeMonth() {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
+                .body(postService.postLikeMonthResponse());
+    }
 }

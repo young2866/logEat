@@ -82,4 +82,15 @@ public class UserController {
 			}});
 		}
 	}
+	@GetMapping("/user/mypage")
+	public ResponseEntity<ResponseDto> myPage() {
+		UserInfoResponseDto userInfo = userService.getMypage();
+		return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "User info loaded successfully", userInfo), HttpStatus.OK);
+	}
+
+	@PatchMapping("/user/update")
+	public ResponseEntity<ResponseDto> updateUserInfo(UserInfoUpdateRequestDto userInfoupdateDto) {
+		userService.updateInfoUser(userInfoupdateDto);
+		return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "User updated successfully", userInfoupdateDto.getNickname()), HttpStatus.OK);
+	}
 }

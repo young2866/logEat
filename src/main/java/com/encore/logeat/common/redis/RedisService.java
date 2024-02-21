@@ -1,5 +1,6 @@
 package com.encore.logeat.common.redis;
 
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -65,4 +66,12 @@ public class RedisService {
         return !value.equals("false");
     }
 
+    public void increment(String key) {
+        ValueOperations<String, Object> values = redisTemplate.opsForValue();
+        values.increment(key);
+    }
+
+    public Set<String> keys(String pattern) {
+        return redisTemplate.keys(pattern);
+    }
 }
