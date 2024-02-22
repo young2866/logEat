@@ -11,7 +11,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class NotificationCreateDto {
 	private Long sender_id;
-	private String url_path;
+	private String sender_profile_url;
+	private Long following_id;
 	private NotificationType notificationType;
 
 }

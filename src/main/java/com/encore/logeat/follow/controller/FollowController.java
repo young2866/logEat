@@ -19,9 +19,9 @@ public class FollowController {
 		this.followService = followService;
 	}
 
-	@PostMapping("/follow/{userId}")
-	public ResponseEntity<ResponseDto> addFollow(@PathVariable Long userId) {
-		ResponseDto responseDto = followService.addFollow(userId);
+	@PostMapping("/follow/{nickname}")
+	public ResponseEntity<ResponseDto> addFollow(@PathVariable String nickname) {
+		ResponseDto responseDto = followService.addFollow(nickname);
 		return new ResponseEntity<>(responseDto, HttpStatus.OK);
 	}
 }
