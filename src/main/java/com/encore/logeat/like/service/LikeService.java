@@ -76,7 +76,7 @@ public class LikeService {
                     .result(HttpStatus.OK)
                     .build();
             post.reduceLikeCount();
-            postLikeReportRepository.delete(new PostLikeReport(post, post.getUser()));
+            postLikeReportRepository.delete(new PostLikeReport(like.getPost(), like.getUser()));
         }
         return responseDto;
     }
