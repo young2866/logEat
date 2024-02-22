@@ -29,7 +29,6 @@ import com.encore.logeat.post.domain.Post;
 import com.encore.logeat.post.repository.PostLikeReportRepository;
 import com.encore.logeat.post.repository.PostRepository;
 import com.encore.logeat.user.domain.User;
-import com.encore.logeat.user.dto.request.UserInfoResponseDto;
 import com.encore.logeat.user.repository.UserRepository;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -54,8 +53,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.Duration;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.Objects;
@@ -317,11 +315,11 @@ public class PostService {
         List<Follow> followingList = user.getFollowingList();
         // 찾은 포스트를 담기 위한 리스트 생성
         List<PostSearchResponseDto> findFollowUserPost = new ArrayList<>();
-
+        PageRequest findPage = PageRequest.of(0,5);
         for (Follow follow : followingList) {
             User following = follow.getFollowing();
             // 팔로잉한 유저의 게시글 들을 가져옴
-            Page<Post> followingPostList = postRepository.findLatestPostByUserFollowing(following.getId(),pageable);
+            Page<Post> followingPostList = postRepository.findLatestPostByUserFollowing(following.getId(),findPage);
             if (!followingPostList.isEmpty()) {
                 // findLatestPostByUserFollowing에서 최신글(비공개글 제외) 순서로 불러옴
                 // 따라서 content의 0번째를 꺼내면 팔로잉한 유저의 최신글을 가져옴
@@ -332,7 +330,13 @@ public class PostService {
         }
         // PageImpl: Page 인터페이스 구현체
         // PageImpl<>(페이지에 넣을 리스트, 페이징 데이터인 pageble 객체, 전체 항목수);
-        return new PageImpl<>(findFollowUserPost, pageable, findFollowUserPost.size());
+        int start = (int) pageable.getOffset();
+        PageRequest pageRequest = PageRequest.of(1, 5);
+        int end = Math.min(findFollowUserPost.size(), start + 5);
+        if(end < start) {
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
+        }
+        return new PageImpl<>(findFollowUserPost.subList(start, end), pageRequest, findFollowUserPost.size());
     }
 
     public Page<PostSearchResponseDto> findMyPost(Pageable pageable) {
