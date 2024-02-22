@@ -92,7 +92,7 @@ public class UserController {
 	}
 
 	@PatchMapping("/user/update")
-	public ResponseEntity<ResponseDto> updateUserInfo(UserInfoUpdateRequestDto userInfoupdateDto) {
+	public ResponseEntity<ResponseDto> updateUserInfo(@RequestBody UserInfoUpdateRequestDto userInfoupdateDto) {
 		userService.updateInfoUser(userInfoupdateDto);
 		return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "User updated successfully", userInfoupdateDto.getNickname()), HttpStatus.OK);
 	}
