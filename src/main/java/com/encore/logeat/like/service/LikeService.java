@@ -61,7 +61,7 @@ public class LikeService {
             likeRepository.save(like);
             responseDto = ResponseDto.builder()
                     .httpStatus(HttpStatus.OK)
-                    .message(user.getNickname() + " success like it on the post")
+                    .message("success")
                     .result(HttpStatus.OK)
                     .build();
             post.addLikeCount();
@@ -72,7 +72,7 @@ public class LikeService {
             likeRepository.delete(like);
             responseDto = ResponseDto.builder()
                     .httpStatus(HttpStatus.OK)
-                    .message("like delete")
+                    .message("cancel")
                     .result(HttpStatus.OK)
                     .build();
             post.reduceLikeCount();
