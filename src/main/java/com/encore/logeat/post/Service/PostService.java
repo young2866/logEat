@@ -1,6 +1,7 @@
 package com.encore.logeat.post.Service;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.encore.logeat.common.entity.CustomMultipartFile;
 import com.encore.logeat.common.s3.S3Config;
 
 import static com.encore.logeat.common.redis.CacheNames.POST;
@@ -25,7 +26,12 @@ import com.encore.logeat.post.repository.PostLikeReportRepository;
 import com.encore.logeat.post.repository.PostRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.repository.UserRepository;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import javax.imageio.ImageIO;
+import marvin.image.MarvinImage;
+import org.marvinproject.image.transform.scale.Scale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +39,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -48,6 +55,7 @@ import java.util.stream.Collectors;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.Objects;
 import java.util.Set;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @Transactional
@@ -77,8 +85,7 @@ public class PostService {
     @PreAuthorize("hasAuthority('USER')")
     public Post createPost(PostCreateRequestDto postCreateRequestDto) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        String[] split = name.split(":");
-        long userId = Long.parseLong(split[0]);
+        long userId = Long.parseLong(name);
 
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("not found user"));
 
@@ -214,12 +221,16 @@ public class PostService {
     }
 
     public String saveFile(MultipartFile request, String newFileName) throws IOException {
+        String fileFormat = request.getContentType()
+            .substring(request.getContentType().lastIndexOf("/") + 1);
+
+        MultipartFile resizedImage = resizer(newFileName, fileFormat, request, 500);
 
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(request.getSize());
-        metadata.setContentType(request.getContentType());
+        metadata.setContentLength(resizedImage.getSize());
+        metadata.setContentType(resizedImage.getContentType());
 
-        s3Config.amazonS3Client().putObject(bucket, newFileName, request.getInputStream(), metadata);
+        s3Config.amazonS3Client().putObject(bucket, newFileName, resizedImage.getInputStream(), metadata);
         return s3Config.amazonS3Client().getUrl(bucket, newFileName).toString();
 
     }
@@ -319,4 +330,34 @@ public class PostService {
         return new PageImpl<>(findFollowUserPost, pageable, findFollowUserPost.size());
     }
 
+    @Transactional
+    public MultipartFile resizer(String fileName, String fileFormat, MultipartFile originalImage, int width) {
+        try {
+            BufferedImage image = ImageIO.read(originalImage.getInputStream());// MultipartFile -> BufferedImage Convert
+
+            int originWidth = image.getWidth();
+            int originHeight = image.getHeight();
+
+            if(originWidth < width)
+                return originalImage;
+
+            MarvinImage imageMarvin = new MarvinImage(image);
+
+            Scale scale = new Scale();
+            scale.load();
+            scale.setAttribute("newWidth", width);
+            scale.setAttribute("newHeight", width * originHeight / originWidth);//비율유지를 위해 높이 유지
+            scale.process(imageMarvin.clone(), imageMarvin, null, null, false);
+
+            BufferedImage imageNoAlpha = imageMarvin.getBufferedImageNoAlpha();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(imageNoAlpha, fileFormat, baos);
+            baos.flush();
+
+            return new CustomMultipartFile(fileName,fileFormat,originalImage.getContentType(), baos.toByteArray());
+
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 줄이는데 실패했습니다.");
+        }
+    }
 }

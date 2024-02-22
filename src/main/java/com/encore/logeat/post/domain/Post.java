@@ -30,8 +30,7 @@ public class Post extends BaseTimeEntity {
 	private String title;
 	@Column(nullable = false)
 	private String contents;
-	@Column(name = "image_path")
-	private String imagePath;
+	@Column(length = 4000)
 	private String location;
 	private String category;
 	@Builder.Default
@@ -48,9 +47,6 @@ public class Post extends BaseTimeEntity {
 
 	public void addLikeCount(){this.likeCount+=1;}
 	public void reduceLikeCount(){this.likeCount-=1;}
-	public void setImagePath(String imagePath){
-		this.imagePath = imagePath;
-	}
 	public void updatePost(String title, String contents, String location, String category){
         this.title = title;
         this.contents = contents;

@@ -1,4 +1,4 @@
-package com.encore.logeat.user.dto.request;
+package com.encore.logeat.user.dto.response;
 
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;

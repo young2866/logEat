@@ -25,7 +25,7 @@ public class UserRefreshToken {
 	@JoinColumn(name = "user_id")
 	private User user;
 	private String refreshToken;
-	private int reissueCount = 0;
+	private Long reissueCount;
 
 	public UserRefreshToken(User user, String refreshToken) {
 		this.user = user;
@@ -33,6 +33,7 @@ public class UserRefreshToken {
 	}
 
 	public void updateUserRefreshToken(String refreshToken) {
+		this.reissueCount = 0L;
 		this.refreshToken = refreshToken;
 	}
 
