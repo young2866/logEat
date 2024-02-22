@@ -13,5 +13,5 @@ public class PostUpdateRequestDto {
     private String contents;
     private String category;
     private String location;
-    private MultipartFile postImage;
+    private String secretYn;
 }

@@ -47,11 +47,14 @@ public class Post extends BaseTimeEntity {
 
 	public void addLikeCount(){this.likeCount+=1;}
 	public void reduceLikeCount(){this.likeCount-=1;}
-	public void updatePost(String title, String contents, String location, String category){
+	public void updatePost(String title, String contents, String location, String category, String SecretYn){
         this.title = title;
         this.contents = contents;
         this.location = location;
         this.category = category;
+		if(SecretYn.equals("N"))
+			this.secretYorN = "N";
+		else this.secretYorN = "Y";
     }
 	public void setSecret(String secretYorN){
 		this.secretYorN = secretYorN;

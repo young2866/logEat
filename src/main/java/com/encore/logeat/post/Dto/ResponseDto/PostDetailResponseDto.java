@@ -17,6 +17,7 @@ public class PostDetailResponseDto {
 	private String title;
 	private String contents;
 	private String userNickname;
+	private String secretYn;
 	private int likeCount;
 	private String category;
 	private String location;
@@ -31,6 +32,7 @@ public class PostDetailResponseDto {
 		builder.likeCount(post.getLikeCount());
 		builder.category(post.getCategory());
 		builder.location(post.getLocation());
+		builder.secretYn(post.getSecretYorN());
 		builder.createdTime(
 			post.getCreatedTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 

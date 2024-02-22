@@ -2,6 +2,7 @@ package com.encore.logeat.post.Service;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.encore.logeat.common.entity.CustomMultipartFile;
+import com.encore.logeat.common.redis.CacheNames;
 import com.encore.logeat.common.s3.S3Config;
 
 import static com.encore.logeat.common.redis.CacheNames.POST;
@@ -37,6 +38,7 @@ import javax.imageio.ImageIO;
 import marvin.image.MarvinImage;
 import org.marvinproject.image.transform.scale.Scale;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -97,6 +99,7 @@ public class PostService {
                 .contents(postCreateRequestDto.getContents())
                 .category(postCreateRequestDto.getCategory())
                 .location(postCreateRequestDto.getLocation())
+                .secretYorN(postCreateRequestDto.getSecretYn().equals("N")? "N":"Y")
                 .user(user)
                 .build();
 
@@ -104,6 +107,7 @@ public class PostService {
     }
 
     @PreAuthorize("hasAuthority('USER')")
+    @CacheEvict(cacheNames = POST, key = "#id")
     public Post update(Long id, PostUpdateRequestDto postUpdateRequestDto) {
         Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("not found post"));
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -115,7 +119,8 @@ public class PostService {
                     postUpdateRequestDto.getTitle(),
                     postUpdateRequestDto.getContents(),
                     postUpdateRequestDto.getCategory(),
-                    postUpdateRequestDto.getLocation()
+                    postUpdateRequestDto.getLocation(),
+                    postUpdateRequestDto.getSecretYn()
             );
         } else {
             throw new RuntimeException("본인이 작성한 글만 수정 가능합니다.");
