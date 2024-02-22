@@ -29,6 +29,7 @@ import com.encore.logeat.post.domain.Post;
 import com.encore.logeat.post.repository.PostLikeReportRepository;
 import com.encore.logeat.post.repository.PostRepository;
 import com.encore.logeat.user.domain.User;
+import com.encore.logeat.user.dto.request.UserInfoResponseDto;
 import com.encore.logeat.user.repository.UserRepository;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -334,6 +335,21 @@ public class PostService {
         return new PageImpl<>(findFollowUserPost, pageable, findFollowUserPost.size());
     }
 
+    public Page<PostSearchResponseDto> findMyPost(Pageable pageable) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = null;
+        if (authentication != null && authentication.isAuthenticated() && !"anonymous".equals(authentication.getName())) {
+            String[] split = authentication.getName().split(":");
+            userId = Long.parseLong(split[0]);
+        } else {
+            // 인증되지 않은 사용자에 대한 처리 로직 추가 (예: 예외 발생)
+            throw new RuntimeException("User is not authenticated.");
+        }
+        // 사용자 본인이 작성한 게시물만 조회
+        Page<Post> myPosts = postRepository.findAllAccessiblemyPosts(userId, pageable);
+        return myPosts.map(PostSearchResponseDto::toPostSearchResponseDto);
+    }
+
     @Transactional
     public MultipartFile resizer(String fileName, String fileFormat, MultipartFile originalImage, int width) {
         try {
@@ -364,4 +380,5 @@ public class PostService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 줄이는데 실패했습니다.");
         }
     }
+
 }
