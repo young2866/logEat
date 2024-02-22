@@ -1,21 +1,26 @@
 package com.encore.logeat.user.service;
 
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.encore.logeat.common.dto.ResponseDto;
 import com.encore.logeat.common.jwt.JwtTokenProvider;
+import com.encore.logeat.common.s3.S3Config;
 import com.encore.logeat.mail.service.EmailService;
 import com.encore.logeat.common.jwt.refresh.UserRefreshToken;
 import com.encore.logeat.common.jwt.refresh.UserRefreshTokenRepository;
 import com.encore.logeat.user.domain.User;
 import com.encore.logeat.user.dto.request.UserCreateRequestDto;
-import com.encore.logeat.user.dto.request.UserInfoResponseDto;
+import com.encore.logeat.user.dto.response.UserInfoResponseDto;
 import com.encore.logeat.user.dto.request.UserInfoUpdateRequestDto;
 import com.encore.logeat.user.dto.request.UserLoginRequestDto;
 import com.encore.logeat.user.repository.UserRepository;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -26,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UserService {
@@ -34,18 +40,24 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final EmailService emailService;
-  private final UserRefreshTokenRepository userRefreshTokenRepository;
+	private final S3Config s3Config;
+	private final UserRefreshTokenRepository userRefreshTokenRepository;
+
+	@Value("${cloud.aws.s3.bucket}")
+	private String bucket;
 
 	@Autowired
 	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                       JwtTokenProvider jwtTokenProvider, EmailService emailService,
-                    UserRefreshTokenRepository userRefreshTokenRepository) {
+		JwtTokenProvider jwtTokenProvider, EmailService emailService,
+		UserRefreshTokenRepository userRefreshTokenRepository,
+		S3Config s3Config) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.jwtTokenProvider = jwtTokenProvider;
-    this.emailService = emailService;
-    this.userRefreshTokenRepository = userRefreshTokenRepository;
-    }
+		this.s3Config = s3Config;
+		this.emailService = emailService;
+		this.userRefreshTokenRepository = userRefreshTokenRepository;
+	}
 
 	@Transactional
 	public User createUser(UserCreateRequestDto userCreateRequestDto) {
@@ -111,6 +123,7 @@ public class UserService {
 	public boolean nicknameDuplicateCheck(String nickname) {
 		return userRepository.existsByNickname(nickname);
 	}
+
 	public boolean emailDuplicateCheck(String email) {
 		return userRepository.existsByEmail(email);
 	}
@@ -121,7 +134,7 @@ public class UserService {
 		String currentUserName = authentication.getName();
 		Long userId = Long.parseLong(currentUserName);
 		User user = userRepository.findById(userId)
-					.orElseThrow(() -> new EntityNotFoundException("유저의 아이디를 찾을 수 없습니다. " + userId));
+			.orElseThrow(() -> new EntityNotFoundException("유저의 아이디를 찾을 수 없습니다. " + userId));
 		user.updateUserInfo(userInfoupdateDto.getNickname(), userInfoupdateDto.getIntroduce());
 	}
 
@@ -130,14 +143,39 @@ public class UserService {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentUserName = authentication.getName();
 		Long userId = Long.parseLong(currentUserName);
-		User user = userRepository.findById(userId).orElseThrow(() ->  new EntityNotFoundException("유저의 아이디를 찾을 수 없습니다. " + userId));
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new EntityNotFoundException("유저의 아이디를 찾을 수 없습니다. " + userId));
 		UserInfoResponseDto userInfo = new UserInfoResponseDto();
 		userInfo.setNickname(user.getNickname());
-		userInfo.setProfileImage(null);
+		userInfo.setImageUrl(user.getProfileImagePath());
 		userInfo.setIntroduce(user.getIntroduce());
 
 		return userInfo;
 
+	}
+
+	public String saveFile(MultipartFile request, String newFileName) throws IOException {
+		ObjectMetadata metadata = new ObjectMetadata();
+		metadata.setContentLength(request.getSize());
+		metadata.setContentType(request.getContentType());
+
+		s3Config.amazonS3Client()
+			.putObject(bucket, newFileName, request.getInputStream(), metadata);
+		return s3Config.amazonS3Client().getUrl(bucket, newFileName).toString();
+	}
+
+	@PreAuthorize("hasAuthority('USER')")
+	@Transactional
+	public void updateUserImage(String imageUrl) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentUserName = authentication.getName();
+		Long userId = Long.parseLong(currentUserName);
+
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new EntityNotFoundException("유저의 아이디를 찾을 수 없습니다. " + userId));
+
+		user.userUpdatedProfileImageUrl(imageUrl);
+		userRepository.save(user);
 	}
 
 //	@Transactional
@@ -157,8 +195,6 @@ public class UserService {
 //		return ResponseEntity.ok()
 //				.body(new ResponseDto(HttpStatus.OK, message, findUser.getEmail()));
 //	}
-
-
 
 
 }

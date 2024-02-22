@@ -30,7 +30,7 @@ public class PostController {
     }
 
     @PostMapping("/post/new")
-    public ResponseEntity<ResponseDto> createPost(PostCreateRequestDto postCreateRequestDto) {
+    public ResponseEntity<ResponseDto> createPost( PostCreateRequestDto postCreateRequestDto) {
         Post post = postService.createPost(postCreateRequestDto);
         return new ResponseEntity<>(
                 new ResponseDto(HttpStatus.CREATED, "new Post Created!", post.getId()),
@@ -59,7 +59,7 @@ public class PostController {
     }
 
     @GetMapping("/post/main")
-    public Page<PostSearchResponseDto> postMainView(@PageableDefault(size = 9, sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable) {
+    public Page<PostSearchResponseDto> postMainView(@PageableDefault(size = 6, sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return postService.findAllAccessiblePosts(pageable);
     }
 
