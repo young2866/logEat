@@ -17,7 +17,8 @@ public class PostSearchResponseDto {
     private String thumbnailPath;
     private String title;
     private String userNickname;
-    private LocalDate createdTime;
+    private String profileImagePath;
+    private String location;
     private int likeCount;
 
 //    반복된
@@ -27,7 +28,8 @@ public class PostSearchResponseDto {
         builder.thumbnailPath(getThumnailScr(post.getContents()));
         builder.title(post.getTitle());
         builder.userNickname(post.getUser().getNickname());
-        builder.createdTime(post.getCreatedTime().toLocalDate());
+        builder.profileImagePath(post.getUser().getProfileImagePath());
+        builder.location(post.getLocation());
         builder.likeCount(post.getLikeCount());
 
         return builder.build();

@@ -20,7 +20,6 @@ public class PostDetailResponseDto {
 	private int likeCount;
 	private String category;
 	private String location;
-	private String postImage;
 	private String createdTime;
 
 	public static PostDetailResponseDto toPostDetailResponseDto(Post post) {
@@ -32,7 +31,6 @@ public class PostDetailResponseDto {
 		builder.likeCount(post.getLikeCount());
 		builder.category(post.getCategory());
 		builder.location(post.getLocation());
-//            builder.postImage(post.getImagePath());
 		builder.createdTime(
 			post.getCreatedTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
