@@ -39,19 +39,16 @@ public class NotificationService {
 	public void createNotification(NotificationCreateDto notificationCreateDto) {
 		User sender = userRepository.findById(notificationCreateDto.getSender_id())
 			.orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
-		List<User> users = sender.getFollowerList().stream().map(Follow::getFollower)
-			.collect(Collectors.toList());
-		List<Notification> notifications = new ArrayList<>();
-		for (User user : users) {
-			Notification notification = Notification.builder()
-				.notificationType(notificationCreateDto.getNotificationType())
-				.senderName(sender.getNickname())
-				.url_path(notificationCreateDto.getUrl_path())
-				.provider(user)
-				.build();
-			notifications.add(notification);
-		}
-		notificationRepository.saveAll(notifications);
+		User provider = userRepository.findById(notificationCreateDto.getFollowing_id())
+			.orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
+
+		Notification notification = Notification.builder()
+			.notificationType(notificationCreateDto.getNotificationType())
+			.senderName(sender.getNickname())
+			.sender_profile_image(notificationCreateDto.getSender_profile_url())
+			.provider(provider)
+			.build();
+		notificationRepository.save(notification);
 	}
 
 	@PreAuthorize("hasAuthority('USER')")
@@ -62,11 +59,25 @@ public class NotificationService {
 
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("예상치 못한 에러가 발생하였습니다."));
-		Map<Long, Object> notifications = new HashMap<>();
+		List<NotificationListResponseDto> notifications = new ArrayList();
 		for (Notification notification : user.getNotifications()) {
-			notifications.put(notification.getId(),
+			notifications.add(
 				NotificationListResponseDto.toDto(notification));
 		}
 		return new ResponseDto(HttpStatus.OK, "All My Notifications", notifications);
+	}
+
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseDto deleteNoti(Long id) {
+		String name = SecurityContextHolder.getContext().getAuthentication().getName();
+		long userId = Long.parseLong(name);
+
+		Notification notification = notificationRepository.findById(id)
+			.orElseThrow(() -> new IllegalArgumentException("알림 삭제 실패"));
+		if (notification.getProvider().getId() != userId) {
+			throw new IllegalArgumentException("잘못된 요청입니다.");
+		}
+		notificationRepository.delete(notification);
+		return new ResponseDto(HttpStatus.OK, "알림이 삭제되었습니다.", null);
 	}
 }

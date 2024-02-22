@@ -33,7 +33,7 @@ public class Notification extends BaseTimeEntity {
 	@JoinColumn(name = "provider_id")
 	private User provider;
 
-	private String url_path;
+	private String sender_profile_image;
 
 	@Enumerated(EnumType.STRING)
 	private NotificationType notificationType;

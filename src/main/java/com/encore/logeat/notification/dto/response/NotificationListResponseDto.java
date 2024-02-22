@@ -8,14 +8,17 @@ import lombok.Data;
 @Builder
 public class NotificationListResponseDto {
 
+	private Long id;
 	private String senderName;
-	private String url_path;
+	private String senderProfileImageUrl;
 	private String message;
 
 	public static NotificationListResponseDto toDto(Notification notification) {
 		return NotificationListResponseDto.builder()
+			.id(notification.getId())
 			.senderName(notification.getSenderName())
-			.url_path(notification.getUrl_path())
+			.senderProfileImageUrl(notification.getSender_profile_image())
 			.message(notification.getNotificationType().getMessage()).build();
 	}
+
 }

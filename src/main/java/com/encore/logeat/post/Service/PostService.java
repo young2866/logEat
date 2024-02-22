@@ -99,15 +99,8 @@ public class PostService {
                 .location(postCreateRequestDto.getLocation())
                 .user(user)
                 .build();
-        Post save = postRepository.save(newPost);
 
-        NotificationCreateDto notificationCreateDto = NotificationCreateDto.builder()
-            .notificationType(NotificationType.POST)
-            .url_path("/post/" + save.getId() + "/detail")
-            .sender_id(userId)
-            .build();
-        notificationService.createNotification(notificationCreateDto);
-        return save;
+        return postRepository.save(newPost);
     }
 
     @PreAuthorize("hasAuthority('USER')")
