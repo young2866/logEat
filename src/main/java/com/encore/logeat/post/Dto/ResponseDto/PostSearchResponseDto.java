@@ -7,6 +7,8 @@ import lombok.Data;
 import org.apache.tomcat.jni.Address;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -20,6 +22,7 @@ public class PostSearchResponseDto {
     private String profileImagePath;
     private String location;
     private int likeCount;
+    private String createdTime;
 
 //    반복된
     public static PostSearchResponseDto toPostSearchResponseDto(Post post) {
@@ -31,6 +34,8 @@ public class PostSearchResponseDto {
         builder.profileImagePath(post.getUser().getProfileImagePath());
         builder.location(post.getLocation());
         builder.likeCount(post.getLikeCount());
+        builder.createdTime(
+                post.getCreatedTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
         return builder.build();
     }
