@@ -8,6 +8,7 @@ import com.encore.logeat.user.dto.request.UserLoginRequestDto;
 import com.encore.logeat.user.dto.response.UserInfoResponseDto;
 import com.encore.logeat.user.service.UserService;
 import java.util.HashMap;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class UserController {
@@ -95,5 +97,27 @@ public class UserController {
 	public ResponseEntity<ResponseDto> updateUserInfo(@RequestBody UserInfoUpdateRequestDto userInfoupdateDto) {
 		userService.updateInfoUser(userInfoupdateDto);
 		return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "User updated successfully", userInfoupdateDto.getNickname()), HttpStatus.OK);
+	}
+	@PostMapping("/user/image")
+	public ResponseEntity<?> userImageUpload(@RequestParam("upload") MultipartFile request) {
+		try {
+			String originName = request.getOriginalFilename();
+
+			String newFileName = java.util.UUID.randomUUID().toString() + "@" + originName;
+
+			String imageUrl = userService.saveFile(request, newFileName);
+			userService.updateUserImage(imageUrl);
+
+			return ResponseEntity.ok(Map.of(
+				"uploaded", true,
+				"fileName", newFileName,
+				"originName", originName,
+				"url", imageUrl));
+
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body(Map.of(
+				"uploaded", false,
+				"error", Map.of("message", "파일을 업로드하지 못했습니다")));
+		}
 	}
 }
