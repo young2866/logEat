@@ -15,7 +15,7 @@
   <a>
     <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white"/>
   </a>
-  
+
   <br>
   <a>
     <img src="https://img.shields.io/badge/Amazon_AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white"/>
@@ -53,6 +53,9 @@
   - 게시 및 공유 📷: 식사의 사진을 찍어 동기들과 공유하세요! 집밥🍚, 식당🍔🍟, 도시락🍱 등 모든 것! 
   - 카테고리 탐색 🔍: 다양한 음식 카테고리를 탐색하세요. 채식부터 육식 인스턴스 까지, 동기분들의 다양한 음식을 찾아보세요.
   - 좋아요 및 팔로우 🧡: 좋아하는 게시물에 좋아요🧡를 누르고, 다른 동기분들을 팔로우하며 최신글을 바로 볼 수 있습니다!
+ 
+- 소프트웨어 아키텍처
+<img src="https://github.com/young2866/logEat/assets/122894395/79b373f7-26fd-4669-bfeb-5689ec135adf"/>
 
 
 ## 프로젝트 협업
