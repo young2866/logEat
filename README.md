@@ -231,7 +231,7 @@
 <div markdown="1">
     <img src="https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white"/>
     <img src="https://github.com/young2866/logEat/assets/122894395/4e69d585-9e58-44d0-8748-7191ac142cf5"/>
-    <h3>MockAPI</h3>
+    <h3>MockAPI </h3>
     <img width="1372" alt="Postman_MockAPI" src="https://github.com/young2866/logEat/assets/56985486/d8105f3f-82d7-4cb5-ae9d-d77eb0db5a5e">
  
 </div>
