@@ -9,13 +9,17 @@
     <a>
         <img src="https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white"/>
     </a>
+    <br>
   <a>
     <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white"/>
   </a>
   <a>
     <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white"/>
   </a>
-
+    
+<a>
+    <img src="https://img.shields.io/badge/json%20web%20tokens-323330?style=for-the-badge&logo=json-web-tokens&logoColor=pink"/>
+</a>
   <br>
   <a>
     <img src="https://img.shields.io/badge/Amazon_AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white"/>
@@ -26,7 +30,11 @@
   <a>
     <img src="https://img.shields.io/badge/redis-%23DD0031.svg?&style=for-the-badge&logo=redis&logoColor=white"/>
   </a>
+<a>
+    <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white"/>
+</a>
 
+    
 </p> 
 <br>
 
@@ -34,7 +42,7 @@
 <p align='center'>
   <b>Team: LOGEAT<b>
   <br>
-   김영광, 김종원, 장은지, 박성준, 이종표 
+    👨‍💻 김영광, 김종원, 장은지, 박성준, 이종표 
 </p>
 
 ## 목차
