@@ -49,7 +49,7 @@ public class EmailService implements EmailAuthService {
         Duration duration = Duration.ofMinutes(3);
         redisService.setValues(email, authNumber, duration);
 
-        sendEmail(mailProperties.getUsername(), email, "인증번호", authNumber);
+        sendEmail(mailProperties.getUsername(), email, "LogEat 인증번호를 확인해주세요.", authNumber);
 
         return authNumber;
     }
