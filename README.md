@@ -65,7 +65,122 @@
 - 소프트웨어 아키텍처
 <img src="https://github.com/young2866/logEat/assets/122894395/79b373f7-26fd-4669-bfeb-5689ec135adf"/>
 
+- 프로젝트 파일 구조
 
+```
+└── main
+    ├── java
+    │   └── com
+    │       └── encore
+    │           └── logeat
+    │               ├── LogeatApplication.java
+    │               ├── common
+    │               │   ├── dto
+    │               │   │   └── ResponseDto.java
+    │               │   ├── entity
+    │               │   │   ├── BaseTimeEntity.java
+    │               │   │   └── CustomMultipartFile.java
+    │               │   ├── exception
+    │               │   │   └── GlobalException.java
+    │               │   ├── jwt
+    │               │   │   ├── JwtAuthenticationFilter.java
+    │               │   │   ├── JwtTokenProvider.java
+    │               │   │   └── refresh
+    │               │   │       ├── UserRefreshToken.java
+    │               │   │       └── UserRefreshTokenRepository.java
+    │               │   ├── redis
+    │               │   │   ├── CacheNames.java
+    │               │   │   ├── RedisConfig.java
+    │               │   │   └── RedisService.java
+    │               │   ├── s3
+    │               │   │   └── S3Config.java
+    │               │   └── security
+    │               │       └── SecurityConfig.java
+    │               ├── follow
+    │               │   ├── controller
+    │               │   │   └── FollowController.java
+    │               │   ├── domain
+    │               │   │   └── Follow.java
+    │               │   ├── repository
+    │               │   │   └── FollowRepository.java
+    │               │   └── service
+    │               │       └── FollowService.java
+    │               ├── like
+    │               │   ├── Repository
+    │               │   │   └── LikeRepository.java
+    │               │   ├── controller
+    │               │   │   └── LikeController.java
+    │               │   ├── domain
+    │               │   │   └── Like.java
+    │               │   ├── dto
+    │               │   └── service
+    │               │       └── LikeService.java
+    │               ├── mail
+    │               │   ├── EmailAuthService.java
+    │               │   ├── EmailAuthServiceImpl.java
+    │               │   ├── EmailConfig.java
+    │               │   ├── controller
+    │               │   │   └── MailController.java
+    │               │   └── service
+    │               │       └── EmailService.java
+    │               ├── notification
+    │               │   ├── controller
+    │               │   │   └── NotificationController.java
+    │               │   ├── domain
+    │               │   │   ├── Notification.java
+    │               │   │   └── NotificationType.java
+    │               │   ├── dto
+    │               │   │   ├── request
+    │               │   │   │   └── NotificationCreateDto.java
+    │               │   │   └── response
+    │               │   │       └── NotificationListResponseDto.java
+    │               │   ├── repository
+    │               │   │   └── NotificationRepository.java
+    │               │   └── service
+    │               │       └── NotificationService.java
+    │               ├── post
+    │               │   ├── Dto
+    │               │   │   ├── RequestDto
+    │               │   │   │   ├── PostCreateRequestDto.java
+    │               │   │   │   ├── PostSecretUpdateRequestDto.java
+    │               │   │   │   └── PostUpdateRequestDto.java
+    │               │   │   └── ResponseDto
+    │               │   │       ├── PostDetailResponseDto.java
+    │               │   │       ├── PostLikeMonthResponseDto.java
+    │               │   │       ├── PostLikeWeekResponseDto.java
+    │               │   │       └── PostSearchResponseDto.java
+    │               │   ├── Service
+    │               │   │   └── PostService.java
+    │               │   ├── controller
+    │               │   │   └── PostController.java
+    │               │   ├── domain
+    │               │   │   ├── Post.java
+    │               │   │   └── PostLikeReport.java
+    │               │   └── repository
+    │               │       ├── PostLikeReportRepository.java
+    │               │       └── PostRepository.java
+    │               └── user
+    │                   ├── controller
+    │                   │   └── UserController.java
+    │                   ├── domain
+    │                   │   ├── Role.java
+    │                   │   └── User.java
+    │                   ├── dto
+    │                   │   ├── request
+    │                   │   │   ├── UserCreateRequestDto.java
+    │                   │   │   ├── UserInfoUpdateRequestDto.java
+    │                   │   │   └── UserLoginRequestDto.java
+    │                   │   └── response
+    │                   │       └── UserInfoResponseDto.java
+    │                   ├── repository
+    │                   │   └── UserRepository.java
+    │                   └── service
+    │                       └── UserService.java
+    └── resources
+        ├── application.yml
+        └── jwt.yml
+
+```
 ## 프로젝트 협업
 
 <details> <summary> GITHUB </summary> 
