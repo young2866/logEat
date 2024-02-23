@@ -30,4 +30,6 @@ public interface PostLikeReportRepository extends JpaRepository<PostLikeReport, 
     Page<PostLikeReport> findPostLikeReportBy(@Param("startDate") LocalDateTime startDate,
                                               @Param("endDate") LocalDateTime endDate, Pageable pageable);
 
+    PostLikeReport findByPostIdAndUserEmail(Long postId, String email);
+
 }

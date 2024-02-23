@@ -65,7 +65,11 @@ public class LikeService {
                     .result(HttpStatus.OK)
                     .build();
             post.addLikeCount();
-            postLikeReportRepository.save(new PostLikeReport(post, post.getUser()));
+
+            //PostLikeReport postLikeReport = new PostLikeReport(like.getPost(), like.getUser());
+
+
+            //postLikeReportRepository.save();
 
         } else {
             Like like = likeList.get(0);
@@ -76,7 +80,9 @@ public class LikeService {
                     .result(HttpStatus.OK)
                     .build();
             post.reduceLikeCount();
-            postLikeReportRepository.delete(new PostLikeReport(like.getPost(), like.getUser()));
+
+            //postLikeReportRepository.delete(new PostLikeReport(like.getPost(), like.getUser()));
+
         }
         return responseDto;
     }

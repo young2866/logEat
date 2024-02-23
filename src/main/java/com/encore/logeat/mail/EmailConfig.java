@@ -11,17 +11,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 @Configuration
 public class EmailConfig {
 
-
-//    public EmailService emailService() {
-//
-//
-//    }
-//
-//
 //    @Bean
 //    public EmailAuthService emailService(EmailService emailService) {
-//        // 생성 패턴
-//        // Factory.
+//
 //        return new EmailAuthServiceImpl(emailService);
 //    }
 

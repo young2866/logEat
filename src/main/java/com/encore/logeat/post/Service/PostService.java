@@ -2,7 +2,6 @@ package com.encore.logeat.post.Service;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.encore.logeat.common.entity.CustomMultipartFile;
-import com.encore.logeat.common.redis.CacheNames;
 import com.encore.logeat.common.s3.S3Config;
 
 import static com.encore.logeat.common.redis.CacheNames.POST;
@@ -13,15 +12,12 @@ import com.encore.logeat.common.redis.RedisService;
 import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostSecretUpdateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
+import com.encore.logeat.post.Dto.ResponseDto.PostLikeReportResponseDto;
+import com.encore.logeat.post.domain.PostLikeReport;
 import com.encore.logeat.post.dto.ResponseDto.PostDetailResponseDto;
-import com.encore.logeat.notification.domain.NotificationType;
-import com.encore.logeat.notification.dto.request.NotificationCreateDto;
 import com.encore.logeat.notification.service.NotificationService;
 import com.encore.logeat.follow.domain.Follow;
 
-import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
-import com.encore.logeat.post.Dto.RequestDto.PostSecretUpdateRequestDto;
-import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostLikeMonthResponseDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostLikeWeekResponseDto;
 
@@ -382,5 +378,41 @@ public class PostService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 줄이는데 실패했습니다.");
         }
     }
+
+
+    public PostLikeReportResponseDto createPostLike(Long postId, String email) {
+        Post findPost = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("게시글을 못찾았습니다"));
+        User findUser = userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("이메일을 못찾았습니다"));
+
+        PostLikeReport postLikeReport = new PostLikeReport(findPost, findUser);
+        postLikeReportRepository.save(postLikeReport);
+
+        PostLikeReportResponseDto responseDto = PostLikeReportResponseDto.builder()
+                .title(findPost.getTitle())
+                .email(findUser.getEmail())
+                .build();
+
+        return responseDto;
+    }
+
+
+    public PostLikeReportResponseDto deletePostLike(Long postId, String email) {
+        Post findPost = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("게시글을 못찾았습니다"));
+        User findUser = userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("이메일을 못찾았습니다"));
+
+        //PostLikeReport postLikeReport = new PostLikeReport(findPost, findUser);
+        PostLikeReport findPostLikeReport = postLikeReportRepository.findByPostIdAndUserEmail(findPost.getId(), findUser.getEmail());
+
+        postLikeReportRepository.delete(findPostLikeReport);
+
+        PostLikeReportResponseDto responseDto = PostLikeReportResponseDto.builder()
+                .title(findPost.getTitle())
+                .email(findUser.getEmail())
+                .build();
+
+        return responseDto;
+    }
+
+
 
 }

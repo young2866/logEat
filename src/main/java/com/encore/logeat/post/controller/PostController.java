@@ -4,6 +4,8 @@ import com.encore.logeat.common.dto.ResponseDto;
 import com.encore.logeat.post.Dto.RequestDto.PostCreateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostSecretUpdateRequestDto;
 import com.encore.logeat.post.Dto.RequestDto.PostUpdateRequestDto;
+import com.encore.logeat.post.Dto.ResponseDto.PostLikeReportResponseDto;
+import com.encore.logeat.post.domain.PostLikeReport;
 import com.encore.logeat.post.dto.ResponseDto.PostDetailResponseDto;
 import com.encore.logeat.post.Dto.ResponseDto.PostSearchResponseDto;
 import com.encore.logeat.post.Service.PostService;
@@ -124,7 +126,7 @@ public class PostController {
     public ResponseEntity<?> postLikeWeeks() {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
+                .cacheControl(CacheControl.maxAge(1, TimeUnit.MINUTES))
                 .body(postService.postLikeWeekResponse());
     }
 
@@ -132,7 +134,37 @@ public class PostController {
     public ResponseEntity<?> postLikeMonth() {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .cacheControl(CacheControl.maxAge(30, TimeUnit.MINUTES))
+                .cacheControl(CacheControl.maxAge(1, TimeUnit.MINUTES))
                 .body(postService.postLikeMonthResponse());
     }
+
+    @PostMapping("/post/like")
+    public ResponseEntity<?> postLikeAdd(@RequestParam(value = "postId") Long postId,
+                                         @RequestParam(value = "email") String email) {
+        PostLikeReportResponseDto postLike = postService.createPostLike(postId, email);
+        ResponseDto responseDto = ResponseDto.builder()
+                .httpStatus(HttpStatus.OK)
+                .message("좋아요가 되었습니다")
+                .result(postLike)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(responseDto);
+    }
+
+
+    @DeleteMapping("/post/like")
+    public ResponseEntity<?> postLikeDelete(@RequestParam(value = "postId") Long postId,
+                                            @RequestParam(value = "email") String email) {
+        PostLikeReportResponseDto postLike = postService.deletePostLike(postId, email);
+        ResponseDto responseDto = ResponseDto.builder()
+                .httpStatus(HttpStatus.OK)
+                .message("좋아요가 취소되었습니다.")
+                .result(postLike)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(responseDto);
+    }
+
 }
