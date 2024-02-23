@@ -1,7 +1,11 @@
 package com.encore.logeat.post.domain;
 
 import com.encore.logeat.common.entity.BaseTimeEntity;
+import com.encore.logeat.like.domain.Like;
 import com.encore.logeat.user.domain.User;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,6 +45,12 @@ public class Post extends BaseTimeEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
+
+	@OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+	private List<PostLikeReport> likeReports;
+	@OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+	private List<Like> likes;
+
 
 	@Builder.Default
 	private int likeCount=0;

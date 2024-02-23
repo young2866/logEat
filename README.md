@@ -6,13 +6,16 @@
   <a>
     <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/>
   </a>
+    <a>
+        <img src="https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white"/>
+    </a>
   <a>
     <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white"/>
   </a>
   <a>
     <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white"/>
   </a>
-  
+
   <br>
   <a>
     <img src="https://img.shields.io/badge/Amazon_AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white"/>
@@ -45,11 +48,14 @@
 ## 프로젝트 개요 및 설명
 
 - 프로젝트 개요
-  - "Logeat은 '점심에 뭐 먹었어?'라는 호기심에서 시작된 서비스입니다. 친구들의 점심 메뉴가 궁금할 때마다 Logeat를 통해 서로의 식사를 공유하며 궁금증을 쉽게 해결할 수 있습니다."
+  - "Logeat은 '점심에 뭐 먹었어?'라는 호기심에서 시작된 서비스입니다. 동기들의 점심 메뉴가 궁금할 때마다 Logeat를 통해 서로의 식사를 공유하며 궁금증을 쉽게 해결할 수 있습니다."
 - 주요 기능
-  - 게시 및 공유: 식사의 사진을 찍어 전 세계와 공유하세요. 집밥, 길거리음식, 고급 레스토랑의 음식 등 모든 것이 여기에 속합니다.
-  - 카테고리 탐색: 다양한 음식 카테고리를 탐색하세요. 채식부터 육식까지, 당신의 입맛에 맞는 다양한 음식을 찾아보세요.
-  - 좋아요 및 팔로우: 좋아하는 게시물에 좋아요를 누르고, 다른 미식가들을 팔로우하며 커뮤니티와 소통하세요. 당신의 팔로워도 점점 늘어날 것입니다.
+  - 게시 및 공유 📷: 식사의 사진을 찍어 동기들과 공유하세요! 집밥🍚, 식당🍔🍟, 도시락🍱 등 모든 것! 
+  - 카테고리 탐색 🔍: 다양한 음식 카테고리를 탐색하세요. 채식부터 육식 인스턴스 까지, 동기분들의 다양한 음식을 찾아보세요.
+  - 좋아요 및 팔로우 🧡: 좋아하는 게시물에 좋아요🧡를 누르고, 다른 동기분들을 팔로우하며 최신글을 바로 볼 수 있습니다!
+ 
+- 소프트웨어 아키텍처
+<img src="https://github.com/young2866/logEat/assets/122894395/79b373f7-26fd-4669-bfeb-5689ec135adf"/>
 
 
 ## 프로젝트 협업
@@ -63,6 +69,15 @@
 </div>
 </details>
 
+<details> <summary> POSTMAN </summary> 
+<div markdown="1">
+    <img src="https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white"/>
+  <img src="https://github.com/young2866/logEat/assets/122894395/4e69d585-9e58-44d0-8748-7191ac142cf5"/>
+</div>
+</details>
+
+
+
 ## 요구사항
 <details> <summary><b>요구사항 명세서</b></summary>   
   <div markdown="1"> 
@@ -71,7 +86,6 @@
     </a>
   </div>
 </details>
-<br/>
 
 <details> <summary><b>개념/논리 모델링에 따른 ERD모델링 및 DB아키텍쳐</b></summary> 
   <div markdown="1"> 
