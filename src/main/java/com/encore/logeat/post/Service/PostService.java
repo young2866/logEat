@@ -276,7 +276,7 @@ public class PostService {
                         .postId(result.getPost().getId())
                         .title(result.getPost().getTitle())
                         .category(result.getPost().getCategory())
-                        .profileImagePath(result.getUser().getProfileImagePath())
+                        .profileImagePath(result.getPost().getUser().getProfileImagePath())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -293,7 +293,7 @@ public class PostService {
                         .postId(result.getPost().getId())
                         .title(result.getPost().getTitle())
                         .category(result.getPost().getCategory())
-                        .profileImagePath(result.getUser().getProfileImagePath())
+                        .profileImagePath(result.getPost().getUser().getProfileImagePath())
                         .build())
                 .collect(Collectors.toList());
     }
