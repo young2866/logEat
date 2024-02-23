@@ -39,7 +39,6 @@
 - [프로젝트 협업](#프로젝트-협업)
 - [요구사항](#요구사항)
 - [API](#api)
-- [테스트](#테스트-계획-및-결과-보고서)
 
 ---
 
@@ -85,13 +84,6 @@
 ## api
 
 <details> <summary><b>API 명세서</b></summary> 
-<div markdown="1"> 
-</div>
-</details>
-
-## 테스트 계획 및 결과 보고서
-
-<details> <summary><b></b></summary> 
 <div markdown="1"> 
 </div>
 </details>
