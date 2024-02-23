@@ -63,6 +63,14 @@
 </div>
 </details>
 
+<details> <summary> POSTMAN </summary> 
+<div markdown="1">
+  <img src="https://github.com/young2866/logEat/assets/122894395/4e69d585-9e58-44d0-8748-7191ac142cf5"/>
+</div>
+</details>
+
+
+
 ## 요구사항
 <details> <summary><b>요구사항 명세서</b></summary>   
   <div markdown="1"> 
@@ -71,7 +79,6 @@
     </a>
   </div>
 </details>
-<br/>
 
 <details> <summary><b>개념/논리 모델링에 따른 ERD모델링 및 DB아키텍쳐</b></summary> 
   <div markdown="1"> 
