@@ -11,8 +11,6 @@ public class UserCreateRequestDto {
 	private String email;
 	private String nickname;
 	private String password;
-	private MultipartFile profileImage;
-	private String introduce;
 
 	public User toEntity() {
 
@@ -20,7 +18,6 @@ public class UserCreateRequestDto {
 			.email(this.email)
 			.nickname(this.nickname)
 			.password(this.password)
-			.introduce(this.introduce)
 			.role(Role.USER)
 			.build();
 	}

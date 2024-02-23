@@ -13,5 +13,5 @@ public class PostLikeMonthResponseDto {
     private Long postId;
     private String title;
     private String category; // List로 변경하기
-    private MultipartFile postImage;
+    private String profileImagePath;
 }

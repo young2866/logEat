@@ -73,13 +73,6 @@ public class PostController {
                 HttpStatus.OK);
     }
 
-    @PatchMapping("/post/{id}/secretyn")
-    public ResponseEntity<ResponseDto> secretPostStatus(@PathVariable Long id, PostSecretUpdateRequestDto postSecretUpdateRequestDto){
-        Post post = postService.updateSecretStatus(id, postSecretUpdateRequestDto);
-        return new ResponseEntity<>(
-                new ResponseDto(HttpStatus.OK, "비밀글 상태 : "+ post.getSecretYorN(), post.getId()), HttpStatus.OK);
-    }
-
     @GetMapping("/post/main/like_desc")
     public Page<PostSearchResponseDto> postMainViewLikeDesc(@PageableDefault(size = 9, sort = "likeCount", direction = Sort.Direction.DESC) Pageable pageable) {
         return postService.findAllAccessiblePosts(pageable);
@@ -119,7 +112,7 @@ public class PostController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of(
                 "uploaded", false,
-                "error", Map.of("message", "파일을 업로드하지 못했습니다")));
+                "error", Map.of("message", "파일을 업로드 하지 못했습니다")));
         }
     }
     @GetMapping("/post/like/weeks")

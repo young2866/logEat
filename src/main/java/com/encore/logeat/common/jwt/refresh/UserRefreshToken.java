@@ -25,7 +25,7 @@ public class UserRefreshToken {
 	@JoinColumn(name = "user_id")
 	private User user;
 	private String refreshToken;
-	private Long reissueCount;
+	private Long reissueCount = 0L;
 
 	public UserRefreshToken(User user, String refreshToken) {
 		this.user = user;

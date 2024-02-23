@@ -129,6 +129,7 @@ public class UserService {
 	}
 
 	@Transactional
+	@PreAuthorize("hasAuthority('USER')")
 	public void updateInfoUser(UserInfoUpdateRequestDto userInfoupdateDto) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentUserName = authentication.getName();
