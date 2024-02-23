@@ -85,5 +85,8 @@
 
 <details> <summary><b>API 명세서</b></summary> 
 <div markdown="1"> 
+    <br>
+    <a href="https://www.notion.so/invite/b3a0c77f9d1cf2769fca626c460b796713022126">
+    <img width="1350" alt="Screenshot 2024-02-23 at 11 27 17 AM" src="https://github.com/young2866/logEat-frontend/assets/125184448/baf6f7e4-b77f-4af5-8109-a19e2beca25c">
 </div>
 </details>
