@@ -11,6 +11,14 @@ jobs:
     steps:  
       - uses: actions/checkout@v2
 
+      - name: Set YML
+        run: |
+          mkdir -p src/main/resources
+          echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > src/main/resources/application.yml
+          find src
+          echo "${{ secrets.JWT_YML }}" | base64 --decode > src/main/resources/jwt.yml
+          find src
+      
       - name: Build with Gradle  
         working-directory: ./  
         run: |  
