@@ -94,6 +94,8 @@ public class PostController {
         PostDetailResponseDto postDetailResponseDto = postService.postDetail(id);
         return new ResponseEntity<>(postDetailResponseDto, HttpStatus.OK);
     }
+    
+    @CrossOrigin
     @PostMapping("/post/image/upload")
     public ResponseEntity<?> postImageUpload(@RequestParam("upload") MultipartFile request) {
         try {
