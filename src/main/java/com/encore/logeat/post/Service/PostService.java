@@ -227,8 +227,8 @@ public class PostService {
         metadata.setContentLength(resizedImage.getSize());
         metadata.setContentType(resizedImage.getContentType());
 
-        s3Config.amazonS3Client().putObject(bucket, newFileName, resizedImage.getInputStream(), metadata);
-        return s3Config.amazonS3Client().getUrl(bucket, newFileName).toString();
+        s3Config.amazonS3Client().putObject(bucket, "postImages/" + newFileName, resizedImage.getInputStream(), metadata);
+        return s3Config.amazonS3Client().getUrl(bucket, "postImages/" + newFileName).toString();
 
     }
     public void addViewCountCache(Long postId) {
