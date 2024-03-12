@@ -61,8 +61,8 @@ jobs:
             sudo docker pull ticketpaper2/logeat-backend:$NEW_VERSION
             sudo docker stop logeat-backend || true
             sudo docker rm -f logeat-backend || true
-            sudo docker run -d --name logeat-backend -p 8081:8081 ticketpaper2/logeat-backend:$NEW_VERSION
-            sudo docker run -d --name logeat-backend -p 8082:8081 ticketpaper2/logeat-backend:$NEW_VERSION
+            sudo docker run -d --name logeat-backend1 -p 8081:8081 ticketpaper2/logeat-backend:$NEW_VERSION
+            sudo docker run -d --name logeat-backend2 -p 8082:8081 ticketpaper2/logeat-backend:$NEW_VERSION
         
             echo "Deployed $NEW_VERSION version"
             # 이전 버전의 이미지 삭제 또는 보관 로직 추가 (선택적)
