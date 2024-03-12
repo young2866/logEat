@@ -31,8 +31,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.csrf(csrf -> csrf.ignoringAntMatchers("/user/new", "/doLogin")
-						.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+		httpSecurity.csrf(csrf -> csrf.disable())
 			.cors().configurationSource(request -> {
 				CorsConfiguration corsConfiguration = new CorsConfiguration();
 				corsConfiguration.setAllowedOrigins(List.of("https://www.logeat.shop"));
