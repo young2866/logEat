@@ -51,7 +51,7 @@ jobs:
             sudo docker login --username ${{ secrets.DOCKER_NAME }} --password ${{ secrets.DOCKER_PASSWORD }}
             sudo docker pull ticketpaper2/logeat-backend:v1 
             sudo docker stop logeat-backend || true
-            sudo docker rm -rf logeat-backend || true
+            sudo docker rm -f logeat-backend || true
 
             sudo docker run -d --name logeat-backend -p 8081:8081 \
             -e SPRING_DATASOURCE_URL=jdbc:mariadb://${{ secrets.DB_HOST }}:3306/logeat \
