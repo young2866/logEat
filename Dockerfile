@@ -10,4 +10,4 @@ RUN ./gradlew bootJar
 FROM openjdk:11
 WORKDIR /app
 COPY --from=stage1 /app/build/libs/*.jar app.jar
-ENTRYPOINT [ "java","-jar","app.jar" ]
+ENTRYPOINT ["java", "-Duser.timezone=Asia/Seoul", "-jar", "app.jar"]
