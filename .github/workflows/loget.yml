@@ -1,14 +1,12 @@
-name: Deploy to Ec2 With Docker
-  
-on:  
-  push:  
-    branches:  
+name: Deploy to Ec2 With Docker Blue/Green
+on:
+  push:
+    branches:
       - master
-  
-jobs:  
-  build-and-deploy:  
-    runs-on: ubuntu-latest  
-    steps:  
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions/checkout@v2
 
       - name: Set YML
@@ -24,33 +22,45 @@ jobs:
         run: |  
           chmod +x ./gradlew  
           ./gradlew bootJar 
-  
+
       - name: Build Docker image
         working-directory: ./
-        run: docker build -t ticketpaper2/logeat-backend:v1 .
-
+        run: |
+          docker build -t ticketpaper2/logeat-backend:blue -f Dockerfile.blue .
+          docker build -t ticketpaper2/logeat-backend:green -f Dockerfile.green .
+      
       - name: DockerHub Login
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_NAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-    
-      - name: Push Docker Image to DockerHub
-        run: docker push ticketpaper2/logeat-backend:v1        
-      
-      - name: EC2 SSH Login and Docker run
+
+      - name: Push Docker Images to DockerHub
+        run: |
+          docker push ticketpaper2/logeat-backend:blue
+          docker push ticketpaper2/logeat-backend:green
+      - name: EC2 SSH Login and Docker run with Blue/Green Deployment
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}  
-          username: ${{ secrets.EC2_USERNAME }}  
-          key: ${{ secrets.EC2_SSH_KEY }} 
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            if ! type docker > /dev/null ; then
+            if ! type docker > /dev/null; then
               sudo snap install docker
             fi
             sudo docker login --username ${{ secrets.DOCKER_NAME }} --password ${{ secrets.DOCKER_PASSWORD }}
-            sudo docker pull ticketpaper2/logeat-backend:v1 
+            CURRENT_VERSION=$(sudo docker ps --filter name=logeat-backend --format “{{.Image}}” | cut -d “:” -f2)
+            if [ “$CURRENT_VERSION” = “green” ]; then
+              NEW_VERSION=“blue”
+              OLD_VERSION=“green”
+            else
+              NEW_VERSION=“green”
+              OLD_VERSION=“blue”
+            fi
+            sudo docker pull ticketpaper2/logeat-backend:$NEW_VERSION
             sudo docker stop logeat-backend || true
             sudo docker rm -f logeat-backend || true
-
-            sudo docker run -d --name logeat-backend -p 8081:8081 ticketpaper2/logeat-backend:v1
+            sudo docker run -d --name logeat-backend -p 8081:8081 ticketpaper2/logeat-backend:$NEW_VERSION
+            echo “Deployed $NEW_VERSION version”
+            # 이전 버전의 이미지 삭제 또는 보관 로직 추가 (선택적)
