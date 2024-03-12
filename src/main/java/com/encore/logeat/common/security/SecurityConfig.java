@@ -35,7 +35,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 						.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
 			.cors().configurationSource(request -> {
 				CorsConfiguration corsConfiguration = new CorsConfiguration();
-				corsConfiguration.setAllowedOrigins(List.of("http://www.logeat.shop"));
+				corsConfiguration.setAllowedOrigins(List.of("https://www.logeat.shop"));
 				corsConfiguration.setAllowedMethods(List.of("GET","POST", "PUT","PATCH", "DELETE", "OPTIONS"));
 				corsConfiguration.setAllowedHeaders(List.of("*"));
 				corsConfiguration.addExposedHeader("New-Access-Token");
