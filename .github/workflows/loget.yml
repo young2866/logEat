@@ -26,8 +26,8 @@ jobs:
       - name: Build Docker image
         working-directory: ./
         run: |
-          docker build -t ticketpaper2/logeat-backend:blue -f Dockerfile .
-          docker build -t ticketpaper2/logeat-backend:green -f Dockerfile .
+          docker build -t ticketpaper2/logeat-backend:blue .
+          docker build -t ticketpaper2/logeat-backend:green .
       
       - name: DockerHub Login
         uses: docker/login-action@v1
