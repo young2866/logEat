@@ -24,9 +24,4 @@ public class FollowController {
 		ResponseDto responseDto = followService.addFollow(nickname);
 		return new ResponseEntity<>(responseDto, HttpStatus.OK);
 	}
-
-	@GetMapping("/post/test")
-	public ResponseEntity<?> random() {
-		return new ResponseEntity<>("TestOk", HttpStatus.OK);
-	}
 }
