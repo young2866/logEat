@@ -1,4 +1,4 @@
-FROM openjdk:11 as stage1
+FROM openjdk:11
 WORKDIR /app
 COPY gradlew .
 COPY gradle gradle
@@ -9,5 +9,5 @@ RUN chmod +x ./gradlew
 RUN ./gradlew bootJar
 FROM openjdk:11
 WORKDIR /app
-COPY --from=stage1 /app/build/libs/*.jar app.jar
+COPY /app/build/libs/*.jar app.jar
 ENTRYPOINT ["java", "-Duser.timezone=Asia/Seoul", "-jar", "app.jar"]
