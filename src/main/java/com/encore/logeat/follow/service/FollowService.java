@@ -46,7 +46,7 @@ public class FollowService {
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("예기치 못한 에러가 발생하였습니다."));
 		if (user.getNickname().equals(nickname)) {
-			throw new IllegalArgumentException("스스로 팔로우 할 수 없습니다.");
+			throw new IllegalArgumentException("나를 팔로우 할 수 없습니다.");
 		}
 		User followUser = userRepository.findByNickname(nickname)
 			.orElseThrow(() -> new EntityNotFoundException("팔로우를 할 유저가 존재하지 않습니다."));
