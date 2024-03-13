@@ -21,8 +21,7 @@ jobs:
         working-directory: ./  
         run: |  
           chmod +x ./gradlew
-          gradle clean
-          gradle build
+          ./gradlew clean
           ./gradlew bootJar 
 
       - name: Build Docker image
