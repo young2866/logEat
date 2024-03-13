@@ -31,6 +31,11 @@ public class PostController {
         this.postService = postService;
     }
 
+    @GetMapping("/post/test")
+	public ResponseEntity<?> random() {
+		return new ResponseEntity<>("TestOk", HttpStatus.OK);
+	}
+
     @PostMapping("/post/new")
     public ResponseEntity<ResponseDto> createPost( PostCreateRequestDto postCreateRequestDto) {
         Post post = postService.createPost(postCreateRequestDto);
